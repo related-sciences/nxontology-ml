@@ -1,0 +1,29 @@
+[tool.ruff]
+target-version = "py310"
+ignore = [
+    "E501",  # line-too-long (black should handle)
+]
+line-length = 88
+select = [
+    "B",  # flake8-bugbear
+    "C",  # flake8-comprehensions
+    "C90",  # mccabe
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycode warnings
+]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+pretty = true
+show_error_context = true
+
+# https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml-file
+[[tool.mypy.overrides]]
+module = [
+    "networkx.*",
+]
+ignore_missing_imports = true
