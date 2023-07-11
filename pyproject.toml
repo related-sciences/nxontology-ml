@@ -11,9 +11,13 @@ readme = "README.md"
 repository = "https://github.com/related-sciences/nxontology-ml"
 license = "Apache-2.0"
 
+[tool.poetry.scripts]
+nxontology_ml = "nxontology_ml.commands:cli"
+
 # https://python-poetry.org/docs/versions/
 [tool.poetry.dependencies]
 bioregistry = "^0.8.3"
+fire = "^0.5.0"
 ipykernel = "^6.24.0"
 jupyter = "^1.0.0"
 nbconvert = "^6.2.0"

@@ -15,6 +15,7 @@ def get_efo_otar_slim() -> NXOntology[str]:
 
 
 def write_efo_features() -> None:
+    """Generate and export features for the EFO OTAR Slim ontology."""
     nxo = get_efo_otar_slim()
     directory = get_output_directory(nxo)
     feature_df = get_features_df(nxo)
