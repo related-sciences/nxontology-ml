@@ -15,6 +15,9 @@ See [`nxontology`](https://github.com/related-sciences/nxontology) and [`nxontol
 # Install the environment
 poetry install --no-root
 
+# Run a command
+poetry run nxontology_ml --help
+
 # Update the lock file
 poetry update
 
