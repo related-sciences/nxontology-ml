@@ -1739,18 +1739,18 @@ files = [
 
 [package.dependencies]
 attrs = ">=22.2.0"
-fqdn = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
-idna = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
-isoduration = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
-jsonpointer = {version = ">1.13", optional = true, markers = "extra == \"format-nongpl\""}
+fqdn = {version = "*", optional = true, markers = "extra == \"format\""}
+idna = {version = "*", optional = true, markers = "extra == \"format\""}
+isoduration = {version = "*", optional = true, markers = "extra == \"format\""}
+jsonpointer = {version = ">1.13", optional = true, markers = "extra == \"format\""}
 jsonschema-specifications = ">=2023.03.6"
 referencing = ">=0.28.4"
-rfc3339-validator = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
+rfc3339-validator = {version = "*", optional = true, markers = "extra == \"format\""}
 rfc3986-validator = {version = ">0.1.0", optional = true, markers = "extra == \"format-nongpl\""}
 rfc3987 = {version = "*", optional = true, markers = "extra == \"format\""}
 rpds-py = ">=0.7.1"
-uri-template = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
-webcolors = {version = ">=1.11", optional = true, markers = "extra == \"format-nongpl\""}
+uri-template = {version = "*", optional = true, markers = "extra == \"format\""}
+webcolors = {version = ">=1.11", optional = true, markers = "extra == \"format\""}
 
 [package.extras]
 format = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-validator", "rfc3987", "uri-template", "webcolors (>=1.11)"]
@@ -2807,15 +2807,13 @@ files = [
 
 [[package]]
 name = "nxontology"
-version = "0.5.0"
+version = "0.5.1.dev7+gc503f1c"
 description = "NetworkX for ontologies"
 category = "main"
 optional = false
 python-versions = ">=3.8"
-files = [
-    {file = "nxontology-0.5.0-py3-none-any.whl", hash = "sha256:c95d2d47c2ce8c0bb48e839a3bdc70e489c13f4579b6e88b8d93a2be87c2c07f"},
-    {file = "nxontology-0.5.0.tar.gz", hash = "sha256:727712c2bdbcaf7113f0012aa66bb9097ddef375f604939fb279b0871aed2c2f"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 fsspec = {version = "*", extras = ["http"]}
@@ -2823,8 +2821,14 @@ networkx = ">=2"
 pronto = ">=2.4.0"
 
 [package.extras]
-dev = ["fire", "pandas", "pre-commit", "pytest"]
+dev = ["fire", "pandas (>=1.5.0)", "pre-commit", "pytest"]
 viz = ["pygraphviz"]
+
+[package.source]
+type = "git"
+url = "https://github.com/related-sciences/nxontology.git"
+reference = "c503f1cf19aefbf6bc683605a850429466b3bed5"
+resolved_reference = "c503f1cf19aefbf6bc683605a850429466b3bed5"
 
 [[package]]
 name = "oaklib"
@@ -5263,4 +5267,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a227aedd1b931d778928529b579bf1bee524b08f0ea61d792e0ec125026923d6"
+content-hash = "522c44855e6a1942a28af1c2301285f5a635fd418b74ec119fefad41b0994633"
