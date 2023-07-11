@@ -9,6 +9,23 @@ It is currently in the early stages of development and should be considered expe
 
 See [`nxontology`](https://github.com/related-sciences/nxontology) and [`nxontology-data`](https://github.com/related-sciences/nxontology-data) for other (more mature) components of the nxontology ecosystem.
 
+## Development
+
+```shell
+# Install the environment
+poetry install --no-root
+
+# Update the lock file
+poetry update
+
+# Set up the git pre-commit hooks.
+# `git commit` will now trigger automatic checks including linting.
+pre-commit install
+
+# Run all pre-commit checks (CI will also run this).
+pre-commit run --all
+```
+
 ## License
 
 This source code in this repository is released under an Apache License 2.0 License
