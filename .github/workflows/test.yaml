@@ -1,0 +1,25 @@
+name: Test
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+    - name: Install dependencies
+      shell: bash
+      run: poetry install --ansi --no-interaction
+    - name: Run pre-commit
+      uses: pre-commit/action@v3.0.0
+    # - name: Run tests
+    #   run: poetry run pytest --color=yes
+    - name: Build EFO Features
+      run: poetry run nxontology_ml efo
