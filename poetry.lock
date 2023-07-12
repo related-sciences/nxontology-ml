@@ -1727,14 +1727,14 @@ files = [
 
 [[package]]
 name = "jsonschema"
-version = "4.18.0"
+version = "4.18.2"
 description = "An implementation of JSON Schema validation for Python"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "jsonschema-4.18.0-py3-none-any.whl", hash = "sha256:b508dd6142bd03f4c3670534c80af68cd7bbff9ea830b9cf2625d4a3c49ddf60"},
-    {file = "jsonschema-4.18.0.tar.gz", hash = "sha256:8caf5b57a990a98e9b39832ef3cb35c176fe331414252b6e1b26fd5866f891a4"},
+    {file = "jsonschema-4.18.2-py3-none-any.whl", hash = "sha256:159fdff1443b4c5ed900d4eeac6b928a3485f4aff5fba6edd1e25cd66bb46b39"},
+    {file = "jsonschema-4.18.2.tar.gz", hash = "sha256:af3855bfa30e83b2200a5fe12ab5eb92460e4d3b8e4efd34094aa637f7272a87"},
 ]
 
 [package.dependencies]
@@ -2807,7 +2807,7 @@ files = [
 
 [[package]]
 name = "nxontology"
-version = "0.5.1.dev7+gc503f1c"
+version = "0.5.1.dev7+gb68411d"
 description = "NetworkX for ontologies"
 category = "main"
 optional = false
@@ -2827,8 +2827,8 @@ viz = ["pygraphviz"]
 [package.source]
 type = "git"
 url = "https://github.com/related-sciences/nxontology.git"
-reference = "c503f1cf19aefbf6bc683605a850429466b3bed5"
-resolved_reference = "c503f1cf19aefbf6bc683605a850429466b3bed5"
+reference = "b68411dd7427e303c5f5e389a90185976127c78b"
+resolved_reference = "b68411dd7427e303c5f5e389a90185976127c78b"
 
 [[package]]
 name = "oaklib"
@@ -5267,4 +5267,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "522c44855e6a1942a28af1c2301285f5a635fd418b74ec119fefad41b0994633"
+content-hash = "cedd6f36cb20efe1de9a877f28e9fd052a3545032703375cf5cb9053901d67d0"

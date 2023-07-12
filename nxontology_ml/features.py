@@ -4,11 +4,10 @@ from typing import Any
 
 import pandas as pd
 from nxontology import NXOntology
-from nxontology.node import Node as T_Node
-from nxontology.node import Node_Info
+from nxontology.node import NodeInfo, NodeT
 
 
-class NodeInfoFeatures(Node_Info[T_Node]):
+class NodeInfoFeatures(NodeInfo[NodeT]):
     @property
     def n_parents(self) -> int:
         return len(self.parents)
@@ -48,12 +47,12 @@ class NodeInfoFeatures(Node_Info[T_Node]):
         return metrics
 
 
-class NxontologyFeatures(NXOntology[T_Node]):
+class NxontologyFeatures(NXOntology[NodeT]):
     @classmethod
-    def _get_node_info_cls(cls) -> type[NodeInfoFeatures[T_Node]]:
+    def _get_node_info_cls(cls) -> type[NodeInfoFeatures[NodeT]]:
         return NodeInfoFeatures
 
-    def node_info(self, node: T_Node) -> NodeInfoFeatures[T_Node]:
+    def node_info(self, node: NodeT) -> NodeInfoFeatures[NodeT]:
         info = super().node_info(node)
         assert isinstance(info, NodeInfoFeatures)
         return info
