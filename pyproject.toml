@@ -24,7 +24,7 @@ nbconvert = "^6.2.0"
 notebook = "^6.4.4"
 numpy = "^1.25.1"
 # nxontology = "^0.5.0"
-nxontology = { git = "https://github.com/related-sciences/nxontology.git", rev = "c503f1cf19aefbf6bc683605a850429466b3bed5" }
+nxontology = { git = "https://github.com/related-sciences/nxontology.git", rev = "b68411dd7427e303c5f5e389a90185976127c78b" }
 oaklib = "^0.5.12"
 pandas = "^2.0.3"
 python = "^3.10"

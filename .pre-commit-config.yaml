@@ -24,7 +24,7 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
-          - git+https://github.com/related-sciences/nxontology.git@c503f1cf19aefbf6bc683605a850429466b3bed5
+          - git+https://github.com/related-sciences/nxontology.git@b68411dd7427e303c5f5e389a90185976127c78b
           - pytest
   - repo: https://github.com/python-poetry/poetry
     rev: '1.5.0'
