@@ -1,0 +1,125 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "nxontology_version": "0.4.1",
+    "nxontology_created": "2023-07-01T00:44:38+00:00",
+    "name": "efo_otar_slim",
+    "version": "v3.53.0",
+    "source_url": "https://github.com/EBISPOT/efo/releases/download/current/efo_otar_profile.owl",
+    "node_name_attribute": "efo_label",
+    "node_identifier_attribute": "{node}",
+    "node_url_attribute": "efo_uri",
+    "note": "Test EFO OTAR Slim was created from a sample EFO OTAR Profile by nxontology-data."
+  },
+  "nodes": [
+    {
+      "efo_uri": "http://purl.obolibrary.org/obo/DOID_0050890",
+      "efo_id": "DOID:0050890",
+      "efo_label": "synucleinopathy",
+      "efo_definition": "A neurodegenerative disease that is characterized by the abnormal accumulation of aggregates of alpha-synuclein protein in neurons, nerve fibres or glial cells. [url:http://en.wikipedia.org/wiki/Synucleinopathies ]",
+      "therapeutic_area": false,
+      "gwas_trait": false,
+      "synonyms": [
+        {
+          "name": "alpha Synucleinopathies",
+          "scope": "exact"
+        },
+        {
+          "name": "alpha synucleinopathies",
+          "scope": "related"
+        },
+        {
+          "name": "synucleinopathies",
+          "scope": "related"
+        },
+        {
+          "name": "synucleinopathy",
+          "scope": "exact"
+        }
+      ],
+      "replaces": null,
+      "xrefs": [
+        "MONDO:0000510",
+        "mesh:D000080874",
+        "umls:C5191670"
+      ],
+      "id": "DOID:0050890"
+    },
+        {
+      "efo_uri": "http://www.ebi.ac.uk/efo/EFO_0006792",
+      "efo_id": "EFO:0006792",
+      "efo_label": "Lewy body dementia",
+      "efo_definition": "A progressive form of dementia characterized by the presence of protein deposits called Lewy bodies in the midbrain and cerebral cortex, and loss of cholinergic and dopaminergic neurons. The signs and symptoms overlap with Alzheimer and Parkinson disease.",
+      "therapeutic_area": false,
+      "gwas_trait": true,
+      "synonyms": [
+        {
+          "name": "DLB",
+          "scope": "exact"
+        },
+        {
+          "name": "Lewy body dementia",
+          "scope": "exact"
+        },
+        {
+          "name": "Lewy body disease",
+          "scope": "exact"
+        },
+        {
+          "name": "Lewy body variant of Alzheimer disease",
+          "scope": "related"
+        },
+        {
+          "name": "Senile dementia of the Lewy body type",
+          "scope": "exact"
+        },
+        {
+          "name": "cortical Lewy body disease",
+          "scope": "exact"
+        },
+        {
+          "name": "dementia with Lewy bodies",
+          "scope": "exact"
+        },
+        {
+          "name": "dementia, Lewy body",
+          "scope": "related"
+        },
+        {
+          "name": "diffuse Lewy body disease",
+          "scope": "related"
+        },
+        {
+          "name": "diffuse Lewy body disease with gaze palsy",
+          "scope": "related"
+        },
+        {
+          "name": "lewy body dementia, susceptibility to",
+          "scope": "exact"
+        }
+      ],
+      "replaces": null,
+      "xrefs": [
+        "DOID:12217",
+        "MONDO:0007488",
+        "NCIT:C84826",
+        "gard:0003243",
+        "icd10cm:G31.83",
+        "icd9:331.82",
+        "mesh:D020961",
+        "omim:127750",
+        "orphanet:1648",
+        "snomedct:312991009",
+        "umls:C0752347"
+      ],
+      "id": "EFO:0006792"
+    }
+  ],
+  "links": [
+    {
+      "source": "DOID:0050890",
+      "target": "EFO:0006792"
+    }
+  ]
+}
