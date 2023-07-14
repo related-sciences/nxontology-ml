@@ -19,7 +19,7 @@ jobs:
       run: poetry install --ansi --no-interaction
     - name: Run pre-commit
       uses: pre-commit/action@v3.0.0
-    # - name: Run tests
-    #   run: poetry run pytest --color=yes
+    - name: Run tests
+      run: poetry run pytest --color=yes --cov=nxontology_ml --cov-fail-under=90
     - name: Build EFO Features
       run: poetry run nxontology_ml efo
