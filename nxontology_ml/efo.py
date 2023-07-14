@@ -1,9 +1,10 @@
 import functools
 from collections import Counter
+from pathlib import Path
 from typing import Any
 
 from nxontology_ml.features import NodeInfoFeatures, NxontologyFeatures
-from nxontology_ml.utils import get_output_directory
+from nxontology_ml.utils import ROOT_DIR, get_output_directory
 
 
 class NodeInfoFeaturesEfo(NodeInfoFeatures[str]):
@@ -75,19 +76,24 @@ class NxontologyFeaturesEfo(NxontologyFeatures[str]):
         return info
 
 
+EFO_OTAR_SLIM_URL: str = "https://github.com/related-sciences/nxontology-data/raw/f0e450fe3096c3b82bf531bc5125f0f7e916aad8/efo_otar_slim.json"
+
+
 @functools.cache
-def get_efo_otar_slim() -> NxontologyFeaturesEfo:
-    url = "https://github.com/related-sciences/nxontology-data/raw/f0e450fe3096c3b82bf531bc5125f0f7e916aad8/efo_otar_slim.json"
+def get_efo_otar_slim(url: str = EFO_OTAR_SLIM_URL) -> NxontologyFeaturesEfo:
     nxo = NxontologyFeaturesEfo.read_node_link_json(url)
     assert isinstance(nxo, NxontologyFeaturesEfo)
     nxo.freeze()
     return nxo
 
 
-def write_efo_features() -> None:
+def write_efo_features(
+    url: str = EFO_OTAR_SLIM_URL,
+    parent_dir: Path = ROOT_DIR,
+) -> None:
     """Generate and export features for the EFO OTAR Slim ontology."""
-    nxo = get_efo_otar_slim()
-    directory = get_output_directory(nxo)
+    nxo = get_efo_otar_slim(url)
+    directory = get_output_directory(nxo, parent_dir)
     feature_df = nxo.get_features_df()
     assert nxo.name is not None
     feature_df.to_csv(

@@ -1,11 +1,13 @@
 import logging
+from collections.abc import Callable, Mapping
+from typing import Any
 
-import fire
+from fire import Fire
 
 from nxontology_ml.efo import write_efo_features
 
 
-def cli() -> None:
+def cli(fire_fn: Callable[[Mapping[str, Any]], None] = Fire) -> None:
     """
     Run like `poetry run nxontology_ml`
     """
@@ -14,4 +16,4 @@ def cli() -> None:
     commands = {
         "efo": write_efo_features,
     }
-    fire.Fire(commands)
+    fire_fn(commands)
