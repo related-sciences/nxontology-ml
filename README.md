@@ -18,6 +18,9 @@ poetry install --no-root
 # Run a command
 poetry run nxontology_ml --help
 
+# Run tests
+pytest --cov=nxontology_ml --cov-fail-under=90
+
 # Update the lock file
 poetry update
 
