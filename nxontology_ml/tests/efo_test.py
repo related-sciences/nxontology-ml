@@ -2,7 +2,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from nxontology_ml.efo import EFO_OTAR_SLIM_URL, write_efo_features
-from tests.utils import get_test_resource_path, read_test_resource
+from nxontology_ml.tests.utils import get_test_resource_path, read_test_resource
 
 
 def test_write_efo_features() -> None:

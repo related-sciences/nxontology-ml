@@ -8,8 +8,8 @@ import pytest
 from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import LabelledNode
 from nxontology_ml.gpt_tagger._openai_models import Response
-from tests.gpt_tagger._utils import mk_test_gpt_tagger, precision_config
-from tests.utils import get_test_nodes, read_test_resource
+from nxontology_ml.gpt_tagger.tests._utils import mk_test_gpt_tagger, precision_config
+from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
 
 
 def test_fetch_labels() -> None:

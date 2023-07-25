@@ -11,7 +11,7 @@ from nxontology_ml.gpt_tagger._models import TaskConfig
 from nxontology_ml.gpt_tagger._openai_models import Response
 from nxontology_ml.gpt_tagger._tiktoken_batcher import _TiktokenBatcher
 from nxontology_ml.gpt_tagger._utils import node_to_str_fn
-from tests.utils import get_test_resource_path, read_test_resource
+from nxontology_ml.tests.utils import get_test_resource_path, read_test_resource
 
 precision_config = TaskConfig(
     name="precision",
