@@ -2,7 +2,7 @@ import pandas as pd
 from nxontology.examples import create_metal_nxo
 
 from nxontology_ml.features import NxontologyFeatures
-from tests.utils import read_test_resource
+from nxontology_ml.tests.utils import read_test_resource
 
 
 def test_NxontologyFeatures() -> None:

@@ -2,8 +2,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from nxontology_ml.gpt_tagger._cache import _Cache, _LazyLSM
+from nxontology_ml.gpt_tagger.tests._utils import precision_config
 from nxontology_ml.utils import ROOT_DIR
-from tests.gpt_tagger._utils import precision_config
 
 
 def test_from_config() -> None:

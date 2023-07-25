@@ -8,8 +8,8 @@ from tiktoken import Encoding
 
 from nxontology_ml.gpt_tagger._openai_models import _4K
 from nxontology_ml.gpt_tagger._tiktoken_batcher import _TiktokenBatcher
-from tests.gpt_tagger._utils import precision_config
-from tests.utils import get_test_resource_path
+from nxontology_ml.gpt_tagger.tests._utils import precision_config
+from nxontology_ml.tests.utils import get_test_resource_path
 
 
 @pytest.fixture

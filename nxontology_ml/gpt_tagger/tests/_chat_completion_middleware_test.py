@@ -15,8 +15,8 @@ from nxontology_ml.gpt_tagger._openai_models import (
     Response,
 )
 from nxontology_ml.gpt_tagger._utils import node_to_str_fn
-from tests.gpt_tagger._utils import mk_stub_ccm, precision_config
-from tests.utils import get_test_nodes, read_test_resource
+from nxontology_ml.gpt_tagger.tests._utils import mk_stub_ccm, precision_config
+from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
 
 
 def _mk_test_ccm(

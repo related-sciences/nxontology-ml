@@ -7,8 +7,8 @@ from nxontology_ml.gpt_tagger._utils import (
     node_to_str_fn,
     parse_model_output,
 )
-from tests.gpt_tagger._utils import precision_config
-from tests.utils import get_test_nodes
+from nxontology_ml.gpt_tagger.tests._utils import precision_config
+from nxontology_ml.tests.utils import get_test_nodes
 
 
 def test_config_to_cache_namespace() -> None:
