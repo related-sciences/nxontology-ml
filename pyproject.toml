@@ -33,6 +33,8 @@ openai = "^0.27.8"
 python-dotenv = "^1.0.0"
 tiktoken = "^0.4.0"
 lsm-db = "^0.7.0"
+catboost = "^1.2"
+scikit-learn = "^1.3.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^3.3.3"
