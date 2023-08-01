@@ -1,6 +1,7 @@
+import csv
 from collections.abc import Iterable
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, auto
 from itertools import islice
 from pathlib import Path
 from typing import Any
@@ -21,11 +22,11 @@ class TrainingRecord:
     rs_classification: str
 
 
-class FeatureType(Enum):
-    LABEL = 1
-    NUMERICAL = 2
-    CATEGORICAL = 3
-    IGNORED = 4
+class FeatureType(str, Enum):
+    LABEL = auto()
+    NUMERICAL = auto()
+    CATEGORICAL = auto()
+    IGNORED = auto()
 
     @classmethod
     def from_feature_name(cls, name: str) -> "FeatureType":
@@ -62,11 +63,19 @@ def read_training_data(
 ) -> Iterable[dict[str, Any]]:
     # Get labelled data
     def _labelled_data() -> Iterable[TrainingRecord]:
-        data = iter(data_path.read_text().splitlines())
-        assert next(data).strip() == "efo_otar_slim_id	efo_label	rs_classification"
-        for line in data:
-            efo_otar_slim_id, efo_label, rs_classification = line.split("\t", 3)
-            yield TrainingRecord(efo_otar_slim_id, efo_label, rs_classification)
+        with data_path.open(mode="r") as f:
+            for i, (efo_otar_slim_id, efo_label, rs_classification) in enumerate(
+                csv.reader(f, delimiter="\t")
+            ):
+                if i == 0:
+                    # Skip header
+                    assert (efo_otar_slim_id, efo_label, rs_classification) == (
+                        "efo_otar_slim_id",
+                        "efo_label",
+                        "rs_classification",
+                    )
+                else:
+                    yield TrainingRecord(efo_otar_slim_id, efo_label, rs_classification)
 
     # Get Ontology
     nxo = get_efo_otar_slim()
