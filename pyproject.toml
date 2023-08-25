@@ -43,18 +43,18 @@ pytest = "^7.4.0"
 [tool.ruff]
 target-version = "py310"
 ignore = [
-    "E501",  # line-too-long (black should handle)
+    "E501", # line-too-long (black should handle)
 ]
 line-length = 88
 select = [
-    "B",  # flake8-bugbear
-    "C",  # flake8-comprehensions
-    "C90",  # mccabe
-    "E",  # pycodestyle errors
-    "F",  # pyflakes
-    "I",  # isort
-    "UP",  # pyupgrade
-    "W",  # pycode warnings
+    "B", # flake8-bugbear
+    "C", # flake8-comprehensions
+    "C90", # mccabe
+    "E", # pycodestyle errors
+    "F", # pyflakes
+    "I", # isort
+    "UP", # pyupgrade
+    "W", # pycode warnings
 ]
 
 [tool.mypy]
@@ -62,6 +62,19 @@ python_version = "3.10"
 strict = true
 pretty = true
 show_error_context = true
+
+[tool.pytest.ini_options]
+addopts = """
+    --color=yes
+    --durations=5
+    --cov=nxontology_ml
+    --cov-fail-under=90
+    --cov-report=html
+    --cov-report=term
+"""
+
+[tool.coverage.run]
+omit = ["*test*"]
 
 # https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml-file
 [[tool.mypy.overrides]]
