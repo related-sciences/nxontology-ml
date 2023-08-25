@@ -9,7 +9,7 @@ Note: An API key needs to be set. See below.
 ```python
 from pprint import pprint
 
-from nxontology_ml.efo import get_efo_otar_slim
+from nxontology_ml.data import get_efo_otar_slim
 from nxontology_ml.gpt_tagger import TaskConfig, GptTagger
 from nxontology_ml.utils import ROOT_DIR
 

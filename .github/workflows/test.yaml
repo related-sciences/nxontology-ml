@@ -21,5 +21,5 @@ jobs:
       uses: pre-commit/action@v3.0.0
     - name: Run tests
       run: poetry run pytest
-    - name: Build EFO Features
-      run: poetry run nxontology_ml efo
+    - name: Check CLI
+      run: poetry run nxontology_ml --help

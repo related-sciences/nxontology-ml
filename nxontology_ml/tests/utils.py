@@ -2,8 +2,9 @@ import inspect
 from collections.abc import Iterable
 from pathlib import Path
 
-from nxontology_ml.efo import get_efo_otar_slim
-from nxontology_ml.features import NodeInfoFeatures
+from nxontology.node import NodeInfo
+
+from nxontology_ml.data import get_efo_otar_slim
 
 
 def get_test_resource_path(p: Path | str) -> Path:
@@ -24,7 +25,7 @@ def read_test_resource(p: Path | str) -> str:
     return test_resource.read_text()
 
 
-def get_test_nodes() -> Iterable[NodeInfoFeatures[str]]:
+def get_test_nodes() -> Iterable[NodeInfo[str]]:
     test_efo_otar = get_test_resource_path("sampled_efo_otar_slim.json")
     nxo = get_efo_otar_slim(url=test_efo_otar.as_uri())
     yield from (nxo.node_info(node) for node in sorted(nxo.graph))

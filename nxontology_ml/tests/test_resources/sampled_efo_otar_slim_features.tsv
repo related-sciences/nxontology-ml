@@ -1,3 +1,0 @@
-identifier	name	depth	n_ancestors	n_descendants	intrinsic_ic	intrinsic_ic_scaled	intrinsic_ic_sanchez	intrinsic_ic_sanchez_scaled	n_parents	n_children	n_roots	n_leaves	prefix	is_gwas_trait	xref__doid__count	xref__gard__count	xref__icd10__count	xref__icd9__count	xref__meddra__count	xref__mesh__count	xref__mondo__count	xref__ncit__count	xref__omim__count	xref__omimps__count	xref__orphanet__count	xref__snomedct__count	xref__umls__count
-DOID:0050890	synucleinopathy	0	1	2	0.00000	0.00000	0.00000	0.00000	0	1	1	1	doid	False	0	0	0	0	0	1	1	0	0	0	0	0	1
-EFO:0006792	Lewy body dementia	1	2	1	0.69315	1.00000	0.28768	0.41504	1	0	1	1	efo	True	1	1	0	1	0	1	1	1	1	0	1	1	1
