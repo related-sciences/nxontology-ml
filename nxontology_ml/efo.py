@@ -1,106 +1,60 @@
-import functools
 from collections import Counter
-from pathlib import Path
-from typing import Any
 
-from nxontology_ml.features import NodeInfoFeatures, NxontologyFeatures
-from nxontology_ml.utils import ROOT_DIR, get_output_directory
+import numpy as np
+from nxontology.node import NodeInfo
+
+from nxontology_ml.sklearn_transformer import DataFrameFnTransformer
 
 
-class NodeInfoFeaturesEfo(NodeInfoFeatures[str]):
-    @staticmethod
-    def get_curie_prefix(curie: str) -> str:
-        prefix, _identifier = curie.split(":", 1)
-        return prefix.lower()
-
-    @property
-    def prefix(self) -> str:
-        curie = self.identifier
-        assert isinstance(curie, str)
-        return self.get_curie_prefix(curie)
-
-    @property
-    def is_gwas_trait(self) -> bool:
-        return self.data.get("gwas_trait", False)
-
-    metric_fields = NodeInfoFeatures.metric_fields + [
-        "prefix",
-        "is_gwas_trait",
-    ]
-
-    efo_classification_xref_prefixes = {
-        "doid": "doid",
-        "gard": "gard",
-        "icd10": "icd10",
-        "icd9": "icd9",
-        "meddra": "meddra",
-        "mesh": "mesh",
-        "mondo": "mondo",
-        "ncit": "ncit",
-        "omim": "omim",
-        "omim.ps": "omimps",
-        "orphanet": "orphanet",
-        "snomedct": "snomedct",
-        "umls": "umls",
-    }
+def _get_curie_prefix(curie: str | None) -> str:
     """
-    EFO xref prefixes to include in classification as a dictionary
-    where keys are bioregistry prefixes and values are cleaned prefixes
-    (without punctuation, for use in column names).
-    Only these prefixes will be used as classification features
+    curie format: "{prefix}:{identifier}"
     """
-
-    def get_xref_features(self) -> dict[str, int]:
-        xref_counts: dict[str, int] = Counter()
-        for xref in self.data.get("xrefs") or []:
-            xref_counts[self.get_curie_prefix(xref)] += 1
-        return {
-            f"xref__{prefix_name}__count": xref_counts[prefix]
-            for prefix, prefix_name in self.efo_classification_xref_prefixes.items()
-        }
-
-    def get_metrics(self) -> dict[str, Any]:
-        metrics = super().get_metrics()
-        metrics.update(self.get_xref_features())
-        return metrics
+    assert isinstance(curie, str)
+    prefix, _ = curie.split(":", 1)
+    return prefix.lower()
 
 
-class NxontologyFeaturesEfo(NxontologyFeatures[str]):
-    @classmethod
-    def _get_node_info_cls(cls) -> type[NodeInfoFeaturesEfo]:
-        return NodeInfoFeaturesEfo
+_efo_classification_xref_prefixes = {
+    "doid": "doid",
+    "gard": "gard",
+    "icd10": "icd10",
+    "icd9": "icd9",
+    "meddra": "meddra",
+    "mesh": "mesh",
+    "mondo": "mondo",
+    "ncit": "ncit",
+    "omim": "omim",
+    "omim.ps": "omimps",
+    "orphanet": "orphanet",
+    "snomedct": "snomedct",
+    "umls": "umls",
+}
 
-    def node_info(self, node: str) -> NodeInfoFeaturesEfo:
-        info = super().node_info(node)
-        assert isinstance(info, NodeInfoFeaturesEfo)
-        return info
+_cat_feature_names = ["prefix", "is_gwas_trait"]
+_num_feature_names = [
+    f"xref__{name}__count" for name in _efo_classification_xref_prefixes.values()
+]
 
 
-EFO_OTAR_SLIM_URL: str = "https://github.com/related-sciences/nxontology-data/raw/f0e450fe3096c3b82bf531bc5125f0f7e916aad8/efo_otar_slim.json"
+def _node_xref_cat_features(n: NodeInfo[str]) -> np.array:
+    return np.array([_get_curie_prefix(n.identifier), n.data.get("gwas_trait", False)])
 
 
-@functools.cache
-def get_efo_otar_slim(url: str = EFO_OTAR_SLIM_URL) -> NxontologyFeaturesEfo:
-    nxo = NxontologyFeaturesEfo.read_node_link_json(url)
-    assert isinstance(nxo, NxontologyFeaturesEfo)
-    nxo.freeze()
-    return nxo
-
-
-def write_efo_features(
-    url: str = EFO_OTAR_SLIM_URL,
-    parent_dir: Path = ROOT_DIR,
-) -> None:
-    """Generate and export features for the EFO OTAR Slim ontology."""
-    nxo = get_efo_otar_slim(url)
-    directory = get_output_directory(nxo, parent_dir)
-    feature_df = nxo.get_features_df()
-    assert nxo.name is not None
-    feature_df.to_csv(
-        directory.joinpath(f"{nxo.name}_features.tsv"),
-        index=False,
-        float_format="%.5f",
-        sep="\t",
+def _node_xref_num_features(n: NodeInfo[str]) -> np.array:
+    xref_counts: dict[str, int] = Counter()
+    for xref in n.data.get("xrefs") or []:
+        xref_counts[_get_curie_prefix(xref)] += 1
+    return np.array(
+        [xref_counts[prefix] for prefix in _efo_classification_xref_prefixes.keys()]
     )
-    # need additional dependencies to write parquet
-    # feature_df.to_parquet(directory.joinpath(f"{nxo.name}_features.parquet"))
+
+
+class NodeXrefFeatures(DataFrameFnTransformer):
+    def __init__(self) -> None:
+        super().__init__(
+            num_features_fn=_node_xref_num_features,
+            num_features_names=_num_feature_names,
+            cat_features_fn=_node_xref_cat_features,
+            cat_features_names=_cat_feature_names,
+        )

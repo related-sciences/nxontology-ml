@@ -4,7 +4,7 @@ from pprint import pprint
 
 import pytest
 
-from nxontology_ml.efo import get_efo_otar_slim
+from nxontology_ml.data import get_efo_otar_slim
 from nxontology_ml.gpt_tagger._chat_completion_middleware import (
     _ChatCompletionMiddleware,
 )
