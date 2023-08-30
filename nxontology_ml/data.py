@@ -13,11 +13,12 @@ def read_training_data(
     sort: bool = False,
     shuffle: bool = False,
     take: int | None = None,
+    nxo: NXOntology[str] | None = None,
     data_path: Path = ROOT_DIR / "data/efo_otar_slim_v3.43.0_rs_classification.tsv",
 ) -> tuple[np.ndarray, np.ndarray]:
     assert not (sort and shuffle), "Wat??"
     # Get Ontology
-    nxo = get_efo_otar_slim()
+    nxo = nxo or get_efo_otar_slim()
     nodes: set[str] = set(nxo.graph)
 
     # Get labelled data
