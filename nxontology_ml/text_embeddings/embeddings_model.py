@@ -5,7 +5,6 @@ from hashlib import sha1
 from pathlib import Path
 
 import numpy as np
-from lsm import LSM
 from nxontology.node import NodeInfo
 from torch import Tensor
 from transformers import (
@@ -17,6 +16,7 @@ from transformers import (
 )
 from transformers.modeling_outputs import ModelOutput
 
+from nxontology_ml.gpt_tagger._cache import LazyLSM
 from nxontology_ml.utils import ROOT_DIR
 
 DEFAULT_EMBEDDING_MODEL = "michiyasunaga/BioLinkBERT-base"
@@ -71,7 +71,7 @@ class AutoModelEmbeddings:
         self,
         lazy_model: _LazyAutoModel,
         pooler_attr: str,
-        cache: LSM,
+        cache: LazyLSM,
         counter: Counter[str],
     ):
         self._lazy_model = lazy_model
@@ -120,7 +120,7 @@ class AutoModelEmbeddings:
         return cls(
             lazy_model=lazy_model or _LazyAutoModel(pretrained_model_name),
             pooler_attr=_model_poolers[pretrained_model_name],
-            cache=LSM(
+            cache=LazyLSM(
                 filename=(cache_path or _cache_path(pretrained_model_name)).as_posix()
             ),
             counter=counter or Counter(),

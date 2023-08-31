@@ -1,5 +1,6 @@
 import inspect
 from collections.abc import Iterable
+from io import StringIO
 from pathlib import Path
 
 import pandas as pd
@@ -44,7 +45,7 @@ def read_test_dataframe(
     assert test_resource.is_file(), f"Test resources: {test_resource} does not exist."
     # Note: These resources are usually saved with `df.to_json(orient="records")`
     return pd.read_json(
-        test_resource.read_text(),
+        StringIO(test_resource.read_text()),
         orient=orient,
         dtype=dtype,
     )

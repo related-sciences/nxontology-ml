@@ -27,7 +27,7 @@ class _Cache:
 
     def __init__(
         self,
-        storage: MutableMapping[str, str],
+        storage: MutableMapping[str, bytes],
         counter: Counter[str],
         namespace: str = "",
         key_hash_fn: str | None = None,
@@ -52,7 +52,7 @@ class _Cache:
 
     def __setitem__(self, key: str, value: str) -> None:
         self._counter["Cache/set"] += 1
-        self._storage[self._mk_key(key)] = value
+        self._storage[self._mk_key(key)] = value.encode()
 
     def __delitem__(self, key: str) -> None:
         self._counter["Cache/del"] += 1
@@ -77,14 +77,14 @@ class _Cache:
             cache_path = ROOT_DIR / f".cache/{cache_namespace}.ldb"
             cache_path.parent.mkdir(parents=True, exist_ok=True)
         return cls(
-            storage=_LazyLSM(cache_path.as_posix()),
+            storage=LazyLSM(cache_path.as_posix()),
             namespace="",  # Namespace is already part of the storage path
             key_hash_fn=config.cache_key_hash_fn,
             counter=counter_or_empty(counter),
         )
 
 
-class _LazyLSM(MutableMapping[str, str], AbstractContextManager[Any]):
+class LazyLSM(MutableMapping[str, bytes], AbstractContextManager[Any]):
     """
     Thin wrapper around SQLite4's LSM, so that:
     - LSM can be opened lazily (avoid creating the db file when simply instantiating LSM)
@@ -102,7 +102,7 @@ class _LazyLSM(MutableMapping[str, str], AbstractContextManager[Any]):
         if not self._lsm:
             self._lsm = LSM(filename=self._filename, **self._lsm_kwargs)
 
-    def __setitem__(self, __k: str, __v: str) -> None:
+    def __setitem__(self, __k: str, __v: bytes) -> None:
         self.__open_db()
         assert self._lsm
         self._lsm.__setitem__(__k, __v)
@@ -112,7 +112,7 @@ class _LazyLSM(MutableMapping[str, str], AbstractContextManager[Any]):
         assert self._lsm
         self._lsm.__delitem__(__v)
 
-    def __getitem__(self, __k: str) -> str:
+    def __getitem__(self, __k: str) -> bytes:
         self.__open_db()
         return self._lsm.__getitem__(__k)  # type: ignore
 

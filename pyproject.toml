@@ -33,11 +33,13 @@ openai = "^0.27.8"
 python-dotenv = "^1.0.0"
 tiktoken = "^0.4.0"
 lsm-db = "^0.7.0"
-catboost = "^1.2"
+# Bug in catboost==1.2.1: https://github.com/catboost/catboost/issues/2486
+catboost = "1.2.0"
 scikit-learn = "^1.3.0"
 transformers = "^4.32.0"
 torch = [
-    { version = "^2.0.1", markers = "sys_platform == 'macos'" },
+    { version = "^2.0.1", markers = "sys_platform != 'linux'", source = "pypi" },
+    # Use different src for linux, see: https://pytorch.org/get-started/locally/
     { version = "^2.0.1", markers = "sys_platform == 'linux'", source = "pytorch-cpu-src" },
 ]
 faiss-cpu = "^1.7.4"
@@ -47,14 +49,12 @@ name = "pytorch-cpu-src"
 url = "https://download.pytorch.org/whl/cpu"
 priority = "explicit"
 
-[tool.poetry.dev-dependencies]
-pre-commit = "^3.3.3"
-pytest = "^7.4.0"
-
 [tool.poetry.group.dev.dependencies]
-black = "^23.7.0"
+pre-commit = "^3.3.3"
+black = { extras = ["jupyter"], version = "^23.7.0" }
 pytest = "^7.4.0"
 ruff = "^0.0.286"
+seaborn = "^0.12.2"
 
 [tool.ruff]
 target-version = "py310"
@@ -84,6 +84,7 @@ addopts = """
     --color=yes
     --durations=5
     --cov=nxontology_ml
+    --cov=experimentation
     --cov-fail-under=90
     --cov-report=html
     --cov-report=term

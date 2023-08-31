@@ -37,37 +37,6 @@ def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
     pnf = PrepareNodeFeatures(nxo)
     X, y = read_training_data(nxo=nxo, take=10, sort=True)
 
-    ##
-    # LDA Testing
-    tet = TextEmbeddingsTransformer.from_config(
-        use_lda=True, embedding_model=cached_ame
-    )
-    nf = make_pipeline(pnf, tet).fit_transform(X, y)
-    assert isinstance(nf, NodeFeatures)
-    assert len(nf.cat_features) == 0
-    _compare_vectors(nf.num_features, read_test_dataframe("text_embeddings_lda.json"))
-
-    ##
-    # PCA Testing
-    tet = TextEmbeddingsTransformer.from_config(
-        use_lda=False, pca_components=8, embedding_model=cached_ame
-    )
-    nf = make_pipeline(pnf, tet).fit_transform(X, y)
-    assert isinstance(nf, NodeFeatures)
-    assert len(nf.cat_features) == 0
-    _compare_vectors(nf.num_features, read_test_dataframe("text_embeddings_pca.json"))
-
-    ##
-    # Full embedding Testing
-    tet = TextEmbeddingsTransformer.from_config(
-        use_lda=False, embedding_model=cached_ame
-    )
-    nf = make_pipeline(pnf, tet).fit_transform(X, y)
-    assert isinstance(nf, NodeFeatures)
-    assert len(nf.cat_features) == 0
-    _compare_vectors(nf.num_features, read_test_dataframe("text_embeddings_full.json"))
-
-    ##
     # Disabled testing
     tet = TextEmbeddingsTransformer.from_config(
         enabled=False, embedding_model=cached_ame
@@ -77,6 +46,32 @@ def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
     assert len(nf.cat_features) == 0
     assert len(nf.num_features) == 0
 
-    ##
+    # Full embedding Testing
+    tet = TextEmbeddingsTransformer.from_config(
+        use_lda=False, embedding_model=cached_ame
+    )
+    nf = make_pipeline(pnf, tet).fit_transform(X, y)
+    assert isinstance(nf, NodeFeatures)
+    assert len(nf.cat_features) == 0
+    _compare_vectors(nf.num_features, read_test_dataframe("text_embeddings_full.json"))
+
+    # LDA Testing
+    tet = TextEmbeddingsTransformer.from_config(
+        use_lda=True, embedding_model=cached_ame
+    )
+    nf = make_pipeline(pnf, tet).fit_transform(X, y)
+    assert isinstance(nf, NodeFeatures)
+    assert len(nf.cat_features) == 0
+    _compare_vectors(nf.num_features, read_test_dataframe("text_embeddings_lda.json"))
+
+    # PCA Testing
+    tet = TextEmbeddingsTransformer.from_config(
+        use_lda=False, pca_components=8, embedding_model=cached_ame
+    )
+    nf = make_pipeline(pnf, tet).fit_transform(X, y)
+    assert isinstance(nf, NodeFeatures)
+    assert len(nf.cat_features) == 0
+    _compare_vectors(nf.num_features, read_test_dataframe("text_embeddings_pca.json"))
+
     # Make sure no network calls were made
     assert dict(cached_ame._counter) == {"AutoModelEmbeddings/CACHE_HIT": 50}

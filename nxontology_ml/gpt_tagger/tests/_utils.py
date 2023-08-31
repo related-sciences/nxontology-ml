@@ -45,7 +45,7 @@ def mk_stub_ccm(
 
 
 def mk_test_gpt_tagger(
-    cache_content: dict[str, str],
+    cache_content: dict[str, bytes],
     stub_content: dict[str, Response] | None = None,
 ) -> GptTagger:
     """
