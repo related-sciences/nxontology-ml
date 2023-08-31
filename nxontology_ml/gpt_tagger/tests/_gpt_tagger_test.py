@@ -13,7 +13,7 @@ from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
 
 
 def test_fetch_labels() -> None:
-    cache_content: dict[str, str] = {}
+    cache_content: dict[str, bytes] = {}
     tagger = mk_test_gpt_tagger(cache_content)
     labels = tagger.fetch_labels(get_test_nodes())
     assert list(labels) == [
@@ -33,16 +33,16 @@ def test_fetch_labels() -> None:
         }
     )
     assert cache_content == {
-        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": "medium",
-        "/962b25d69f79f600f23a17e2c3fe79948013b4de": "medium",
+        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b"medium",
+        "/962b25d69f79f600f23a17e2c3fe79948013b4de": b"medium",
     }
 
 
 def test_fetch_labels_cached() -> None:
     # Pre-loaded cache
     cache_content = {
-        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": "medium",
-        "/962b25d69f79f600f23a17e2c3fe79948013b4de": "medium",
+        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b"medium",
+        "/962b25d69f79f600f23a17e2c3fe79948013b4de": b"medium",
     }
     tagger = mk_test_gpt_tagger(cache_content)
     labels = tagger.fetch_labels(get_test_nodes())
@@ -55,8 +55,8 @@ def test_fetch_labels_cached() -> None:
 
 def test_fetch_many_records() -> None:
     # Disable caching
-    class PassthroughDict(dict[str, str]):
-        def __setitem__(self, key: str, value: str) -> None:
+    class PassthroughDict(dict[str, bytes]):
+        def __setitem__(self, key: str, value: bytes) -> None:
             return
 
     tagger = mk_test_gpt_tagger(cache_content=PassthroughDict())
