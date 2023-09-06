@@ -3,8 +3,6 @@ from collections import Counter
 from itertools import repeat
 from unittest.mock import Mock
 
-import pytest
-
 from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import LabelledNode
 from nxontology_ml.gpt_tagger._openai_models import Response
@@ -17,8 +15,8 @@ def test_fetch_labels() -> None:
     tagger = mk_test_gpt_tagger(cache_content)
     labels = tagger.fetch_labels(get_test_nodes())
     assert list(labels) == [
-        LabelledNode(node_efo_id="DOID:0050890", label="medium"),
-        LabelledNode(node_efo_id="EFO:0006792", label="medium"),
+        LabelledNode(node_efo_id="DOID:0050890", labels=["medium"]),
+        LabelledNode(node_efo_id="EFO:0006792", labels=["medium"]),
     ]
     assert tagger.get_metrics() == Counter(
         {
@@ -33,22 +31,22 @@ def test_fetch_labels() -> None:
         }
     )
     assert cache_content == {
-        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b"medium",
-        "/962b25d69f79f600f23a17e2c3fe79948013b4de": b"medium",
+        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b'["medium"]',
+        "/962b25d69f79f600f23a17e2c3fe79948013b4de": b'["medium"]',
     }
 
 
 def test_fetch_labels_cached() -> None:
     # Pre-loaded cache
     cache_content = {
-        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b"medium",
-        "/962b25d69f79f600f23a17e2c3fe79948013b4de": b"medium",
+        "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b'["medium"]',
+        "/962b25d69f79f600f23a17e2c3fe79948013b4de": b'["medium"]',
     }
     tagger = mk_test_gpt_tagger(cache_content)
     labels = tagger.fetch_labels(get_test_nodes())
     assert list(labels) == [
-        LabelledNode(node_efo_id="DOID:0050890", label="medium"),
-        LabelledNode(node_efo_id="EFO:0006792", label="medium"),
+        LabelledNode(node_efo_id="DOID:0050890", labels=["medium"]),
+        LabelledNode(node_efo_id="EFO:0006792", labels=["medium"]),
     ]
     assert tagger.get_metrics() == Counter({"Cache/get": 2, "Cache/hits": 2})
 
@@ -102,16 +100,6 @@ def test_get_metrics() -> None:
     counter = tagger.get_metrics(defensive_copy=False)
     counter["test"] += 1
     assert tagger.get_metrics() == Counter({"test": 43})
-
-
-def test_malformed_response() -> None:
-    stub_payload_json = read_test_resource("precision_payload.json")
-    stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore
-    stub_resp["choices"] = []
-    stub_content = {stub_payload_json: stub_resp}
-    tagger = mk_test_gpt_tagger(cache_content={}, stub_content=stub_content)
-    with pytest.raises(ValueError, match="The response should have only one 'choice'"):
-        list(tagger.fetch_labels(get_test_nodes()))
 
 
 def test_from_config() -> None:

@@ -88,6 +88,8 @@ class _ChatCompletionMiddleware:
             partial_payload["temperature"] = config.model_temperature
         if config.model_top_p:
             partial_payload["top_p"] = config.model_top_p
+        if config.model_n:
+            partial_payload["n"] = config.model_n
         # At the moment, only chat_completion is supported.
         #  See: https://openai.com/blog/gpt-4-api-general-availability
         return cls(

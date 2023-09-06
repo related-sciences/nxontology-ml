@@ -1,3 +1,4 @@
+import json
 import logging
 from collections import Counter
 from collections.abc import Callable, Iterable
@@ -59,13 +60,14 @@ class GptTagger:
         buffer: list[str] | None
         for node in nodes:
             node_str = self._node_to_str_fn(node)
-            label = self._cache.get(node_str)
-            if label:
+            labels_str = self._cache.get(node_str)
+            if labels_str:
+                labels: list[str] = json.loads(labels_str)
                 # Cache hit
                 self._counter["Cache/hits"] += 1
                 node_id = node_efo_id(node)
                 logging.debug(f"Retrieved {node_id} from cache.")
-                yield LabelledNode(node_efo_id=node_id, label=label)
+                yield LabelledNode(node_efo_id=node_id, labels=labels)
             else:
                 # Cache miss
                 self._counter["Cache/misses"] += 1
@@ -81,18 +83,27 @@ class GptTagger:
         Actually request labels for nodes
         """
         resp = self._chat_completion_middleware.create(records)
-        if len(resp["choices"]) != 1:
-            raise ValueError(f"The response should have only one 'choice', got: {resp}")
+
         for k, v in resp["usage"].items():
             self._counter[f"ChatCompletion/{k}"] += v  # type: ignore
-        model_msg: str = resp["choices"][0]["message"]["content"]
-        for record, (node_id, label) in zip(
-            records, parse_model_output(model_msg.splitlines()), strict=True
-        ):
-            # FIXME: do we hard fail on ID mismatch?
-            assert efo_id_from_yaml(record) == node_id, f"ID Mismatch: {resp}"
-            self._cache[record] = label
-            yield LabelledNode(node_id, label)
+
+        # If the model's `n` is >1, we will get several completions ("choices")
+        zipped_outputs = zip(
+            *[
+                parse_model_output(choice["message"]["content"].splitlines())
+                for choice in resp["choices"]
+            ],
+            strict=True,
+        )
+        for record, outputs in zip(records, zipped_outputs, strict=True):
+            record_id = efo_id_from_yaml(record)
+            labels: list[str] = []
+            for node_id, label in outputs:
+                # FIXME: do we hard fail on ID mismatch?
+                assert record_id == node_id, f"ID Mismatch: {resp}"
+                labels.append(label)
+            self._cache[record] = json.dumps(sorted(labels))
+            yield LabelledNode(record_id, labels)
 
     def get_metrics(self, defensive_copy: bool = True) -> Counter[str]:
         """
