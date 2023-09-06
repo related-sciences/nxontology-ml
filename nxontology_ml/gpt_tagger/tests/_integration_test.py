@@ -40,6 +40,7 @@ def test_readme_code_it() -> None:
         prompt_path=ROOT_DIR / "prompts/precision_v1.txt",
         openai_model_name="gpt-4",
         node_attributes=["efo_id", "efo_label", "efo_definition"],
+        model_n=3,
     )
 
     # Get a few EFO nodes
@@ -49,7 +50,7 @@ def test_readme_code_it() -> None:
     # Get their labels
     tagger = GptTagger.from_config(config)
     for ln in tagger.fetch_labels(nodes):
-        print(f"{ln.node_efo_id}: {ln.label}")
+        print(f"{ln.node_efo_id}: {ln.labels}")
 
     # Inspect metrics
     print("\nTagger metrics:")

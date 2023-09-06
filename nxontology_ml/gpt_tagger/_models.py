@@ -37,11 +37,14 @@ class TaskConfig:
     #   prompt content) but it's likely better to use manual cache invalidation
     prompt_version: str = "v1"
 
-    # See https://platform.openai.com/docs/api-reference/chat/create
+    # See https://platform.openai.com/docs/api-reference/chat/create#temperature
     model_temperature: float | None = None
 
-    # See https://platform.openai.com/docs/api-reference/chat/create
+    # See https://platform.openai.com/docs/api-reference/chat/create#top_p
     model_top_p: float | None = None
+
+    # See https://platform.openai.com/docs/api-reference/chat/create#n
+    model_n: int | None = None
 
     # Optionally hash cache key (string values for nodes)
     # The node features will be used as cache key if not hashed.
@@ -55,4 +58,5 @@ class LabelledNode:
     """
 
     node_efo_id: str
-    label: str
+    # If the model's `n` parameter is >1, then several completions are generated for each prompt
+    labels: list[str]

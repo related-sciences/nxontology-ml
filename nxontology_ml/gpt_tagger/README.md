@@ -19,6 +19,7 @@ config = TaskConfig(
     prompt_path=ROOT_DIR / "prompts/precision_v1.txt",
     openai_model_name="gpt-4",
     node_attributes=["efo_id", "efo_label", "efo_definition"],
+    model_n=3,
 )
 
 # Get a few EFO nodes
@@ -28,7 +29,7 @@ nodes = (nxo.node_info(node) for node in sorted(nxo.graph)[:20])
 # Get their labels
 tagger = GptTagger.from_config(config)
 for ln in tagger.fetch_labels(nodes):
-    print(f"{ln.node_efo_id}: {ln.label}")
+    print(f"{ln.node_efo_id}: {ln.labels}")
 
 # Inspect metrics
 print("\nTagger metrics:")
@@ -36,31 +37,31 @@ pprint(tagger.get_metrics())
 ```
 You should get an output similar to:
 ```shell
-DOID:0050890: medium
-DOID:10113: low
-DOID:10718: low
-DOID:13406: medium
-DOID:1947: low
-DOID:7551: low
-EFO:0000094: high
-EFO:0000095: high
-EFO:0000096: medium
-EFO:0000174: medium
-EFO:0000178: medium
-EFO:0000180: medium
-EFO:0000181: medium
-EFO:0000182: medium
-EFO:0000183: medium
-EFO:0000186: medium
-EFO:0000191: medium
-EFO:0000195: low
-EFO:0000196: medium
-EFO:0000197: medium
+DOID:0050890: ['medium', 'medium', 'medium']
+DOID:10113: ['low', 'low', 'low']
+DOID:10718: ['low', 'low', 'low']
+DOID:13406: ['medium', 'medium', 'medium']
+DOID:1947: ['low', 'low', 'low']
+DOID:7551: ['low', 'low', 'low']
+EFO:0000094: ['high', 'high', 'high']
+EFO:0000095: ['high', 'high', 'high']
+EFO:0000096: ['medium', 'medium', 'medium']
+EFO:0000174: ['high', 'high', 'high']
+EFO:0000178: ['high', 'medium', 'medium']
+EFO:0000180: ['low', 'low', 'medium']
+EFO:0000181: ['high', 'medium', 'high']
+EFO:0000182: ['high', 'medium', 'high']
+EFO:0000183: ['high', 'medium', 'medium']
+EFO:0000186: ['high', 'high', 'high']
+EFO:0000191: ['high', 'high', 'high']
+EFO:0000195: ['low', 'medium', 'medium']
+EFO:0000196: ['high', 'high', 'high']
+EFO:0000197: ['high', 'medium', 'medium']
 
 Tagger metrics:
-Counter({'ChatCompletion/total_tokens': 3187,
+Counter({'ChatCompletion/total_tokens': 3543,
          'ChatCompletion/prompt_tokens': 3009,
-         'ChatCompletion/completion_tokens': 178,
+         'ChatCompletion/completion_tokens': 534,
          'Cache/get': 20,
          'Cache/misses': 20,
          'ChatCompletion/records_processed': 20,

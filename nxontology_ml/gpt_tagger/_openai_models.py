@@ -22,6 +22,7 @@ class ChatCompletionsPayload(TypedDict):
     messages: list[ChatCompletionMessage]
     temperature: NotRequired[float]
     top_p: NotRequired[float]
+    n: NotRequired[int]
 
 
 class Choice(TypedDict):
