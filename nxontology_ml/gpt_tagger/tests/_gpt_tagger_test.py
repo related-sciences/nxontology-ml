@@ -3,9 +3,11 @@ import re
 from collections import Counter
 from itertools import repeat
 from unittest.mock import Mock
+from warnings import WarningMessage
 
 import pytest
 
+from nxontology_ml.data import get_efo_otar_slim
 from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import LabelledNode
 from nxontology_ml.gpt_tagger._openai_models import Response
@@ -131,3 +133,47 @@ def test_resp_truncated() -> None:
         ),
     ):
         list(tagger.fetch_labels(get_test_nodes()))
+
+
+def _assert_user_warning_starts_with(warn: WarningMessage, s: str) -> None:
+    assert isinstance(warn.message, UserWarning)
+    warn_msg = warn.message.args[0]
+    assert isinstance(warn_msg, str)
+    assert warn_msg.startswith(s)
+
+
+def test_resp_id_mismatch() -> None:
+    expected_req = read_test_resource("mismatch_payload.json")
+    stub_resp = Response(**json.loads(read_test_resource("mismatch_resp.json")))  # type: ignore[misc]
+    tagger = mk_test_gpt_tagger(
+        stub_content={expected_req: stub_resp}, cache_content={}
+    )
+    nxo = get_efo_otar_slim()
+    valid_resp_node = "DOID:0050890"
+    missing_one_node = "EFO:0006793"
+    missing_all_node = "EFO:0006794"
+    nodes = [
+        nxo.node_info(n) for n in [valid_resp_node, missing_one_node, missing_all_node]
+    ]
+    with pytest.warns() as warns:
+        output = list(tagger.fetch_labels(nodes))
+        expected_output = [
+            LabelledNode(node_efo_id="DOID:0050890", labels=["medium", "high"])
+        ]
+        assert output == expected_output
+
+        # Verify warnings
+        assert len(warns) == 4
+        warns = sorted(warns, key=lambda w: w.message.args[0])  # type: ignore
+        _assert_user_warning_starts_with(
+            warns[0], "Node EFO:0000206 was part of this output but shouldn't be."
+        )
+        _assert_user_warning_starts_with(
+            warns[1], "Node EFO:0006792 was part of this output but shouldn't be."
+        )
+        _assert_user_warning_starts_with(
+            warns[2], "Node EFO:0006793 missing from some choices"
+        )
+        _assert_user_warning_starts_with(
+            warns[3], "Node EFO:0006794 missing from response"
+        )

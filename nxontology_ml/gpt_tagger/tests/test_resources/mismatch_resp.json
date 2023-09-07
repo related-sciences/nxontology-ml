@@ -1,0 +1,29 @@
+{
+  "id": "chatcmpl-XXX",
+  "object": "chat.completion",
+  "created": 1689998640,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "id|precision\nDOID:0050890|medium\nEFO:0006792|medium\nEFO:0000206|low"
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "index": 1,
+      "message": {
+        "role": "assistant",
+        "content": "id|precision\nDOID:0050890|high\nEFO:0006793|medium\nEFO:0000206|medium"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1102,
+    "completion_tokens": 21,
+    "total_tokens": 1123
+  }
+}
