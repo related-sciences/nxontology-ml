@@ -46,6 +46,13 @@ class TaskConfig:
     # See https://platform.openai.com/docs/api-reference/chat/create#n
     model_n: int | None = None
 
+    # The max number of tokens in the prompt conditions how many token are left for the completion
+    #   e.g. If using at most 6553 tokens (8192 * .8) for the prompt, 1639 tokens (8192 - 6553) are
+    #   left for the completion
+    prompt_token_ratio: float = (
+        0.8  # By default, we use 80% of the max token count for the prompt
+    )
+
     # Optionally hash cache key (string values for nodes)
     # The node features will be used as cache key if not hashed.
     cache_key_hash_fn: str | None = "sha1"

@@ -1,7 +1,10 @@
 import json
+import re
 from collections import Counter
 from itertools import repeat
 from unittest.mock import Mock
+
+import pytest
 
 from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import LabelledNode
@@ -68,21 +71,21 @@ def test_fetch_many_records() -> None:
 
     # Need the responses to match the size of the requests
     tagger._chat_completion_middleware._create_fn = Mock(
-        side_effect=[_r(45), _r(45), _r(10)]
+        side_effect=[_r(33), _r(33), _r(33), _r(1)]
     )
 
     test_node = next(iter(get_test_nodes()))
     list(tagger.fetch_labels(repeat(test_node, 100)))
     assert tagger.get_metrics() == Counter(
         {
-            "ChatCompletion/total_tokens": 3369,
-            "ChatCompletion/prompt_tokens": 3306,
+            "ChatCompletion/total_tokens": 4492,
+            "ChatCompletion/prompt_tokens": 4408,
             "Cache/get": 100,
             "Cache/misses": 100,
             "ChatCompletion/records_processed": 100,
             "Cache/set": 100,
-            "ChatCompletion/completion_tokens": 63,
-            "ChatCompletion/create_requests": 3,
+            "ChatCompletion/completion_tokens": 84,
+            "ChatCompletion/create_requests": 4,
         }
     )
 
@@ -111,3 +114,20 @@ def test_from_config() -> None:
     assert id(tagger._counter) == counter_id
     assert id(tagger._chat_completion_middleware._counter) == counter_id
     assert id(tagger._cache._counter) == counter_id
+
+
+def test_resp_truncated() -> None:
+    stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore[misc]
+    assert stub_resp["choices"][0]["finish_reason"] == "stop"
+    stub_resp["choices"][0]["finish_reason"] = "length"  # Simulate resp truncation
+    expected_req = read_test_resource("precision_payload.json")
+    tagger = mk_test_gpt_tagger(
+        stub_content={expected_req: stub_resp}, cache_content={}
+    )
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "The max number of completion tokens available was reached & the response has been truncated. Hint: "
+        ),
+    ):
+        list(tagger.fetch_labels(get_test_nodes()))
