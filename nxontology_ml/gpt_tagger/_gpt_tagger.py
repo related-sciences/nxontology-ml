@@ -1,6 +1,7 @@
 import json
 import logging
-from collections import Counter
+import warnings
+from collections import Counter, defaultdict
 from collections.abc import Callable, Iterable
 from copy import deepcopy
 
@@ -97,24 +98,45 @@ class GptTagger:
                 )
 
         # If the model's `n` is >1, we will get several completions ("choices")
-        zipped_outputs = zip(
-            *[
-                parse_model_output(choice["message"]["content"].splitlines())
-                for choice in resp["choices"]
-            ],
-            strict=True,
-        )
-        for record, outputs in zip(records, zipped_outputs, strict=True):
+        choice_cnt = len(resp["choices"])
+
+        # Extract labels from each choice
+        labels_by_nodes: dict[str, list[str]] = defaultdict(list)
+        for choice in resp["choices"]:
+            for node_id, label in parse_model_output(
+                choice["message"]["content"].splitlines()
+            ):
+                labels_by_nodes[node_id].append(label)
+
+        # Handle missing & valid records
+        rerun_warn_msg = " Hint: It is strongly recommended to rerun node tagging to fix the inconsistent nodes."
+        for record in records:
             record_id = efo_id_from_yaml(record)
-            labels: list[str] = []
-            for node_id, label in outputs:
-                # FIXME: do we hard fail on ID mismatch?
-                assert (
-                    record_id == node_id
-                ), f"ID Mismatch:\n> Records:\n{records}\n> Response:\n{resp}"
-                labels.append(label)
-            self._cache[record] = json.dumps(sorted(labels))
-            yield LabelledNode(record_id, labels)
+            labels = labels_by_nodes.get(record_id, [])
+            if len(labels) == 0:
+                warnings.warn(
+                    f"Node {record_id} missing from response." + rerun_warn_msg,
+                    stacklevel=1,
+                )
+            elif len(labels) < choice_cnt:
+                warnings.warn(
+                    f"Node {record_id} missing from some choices." + rerun_warn_msg,
+                    stacklevel=1,
+                )
+            else:
+                # Valid response for this node
+                self._cache[record] = json.dumps(sorted(labels))
+                yield LabelledNode(record_id, labels)
+
+        # Handle extra records
+        for record in set(labels_by_nodes.keys()) - {
+            efo_id_from_yaml(r) for r in records
+        }:
+            warnings.warn(
+                f"Node {record} was part of this output but shouldn't be."
+                + rerun_warn_msg,
+                stacklevel=1,
+            )
 
     def get_metrics(self, defensive_copy: bool = True) -> Counter[str]:
         """
