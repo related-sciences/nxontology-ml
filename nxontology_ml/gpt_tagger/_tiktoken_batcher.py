@@ -92,8 +92,15 @@ class _TiktokenBatcher:
     def from_config(cls, config: TaskConfig) -> "_TiktokenBatcher":
         tiktoken_encoding = tiktoken.encoding_for_model(config.openai_model_name)
         prompt_token_cnt = len(tiktoken_encoding.encode(config.prompt_path.read_text()))
+        assert 0.0 < config.prompt_token_ratio < 1.0, print(
+            f"Wrong {config.prompt_token_ratio=} value."
+        )
         max_token_cnt = (
-            OPENAI_MODELS[config.openai_model_name].max_token_cnt - prompt_token_cnt
+            int(
+                OPENAI_MODELS[config.openai_model_name].max_token_cnt
+                * config.prompt_token_ratio
+            )
+            - prompt_token_cnt
         )
         if max_token_cnt <= 0:
             raise ValueError(

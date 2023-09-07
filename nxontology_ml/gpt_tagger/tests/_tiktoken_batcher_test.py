@@ -62,7 +62,10 @@ def test_from_config(tiktoken_cl100k_encoding: Encoding) -> None:
     prompt = get_test_resource_path("precision_v1.txt")
     prompt_tokens = len(tiktoken_cl100k_encoding.encode(prompt.read_text()))
     assert prompt_tokens > 0
-    assert batcher._max_token_cnt == _4K - prompt_tokens
+    assert (
+        batcher._max_token_cnt
+        == int(_4K * precision_config.prompt_token_ratio) - prompt_tokens
+    )
 
     # Prompt too long
     invalid_test_config = copy(precision_config)

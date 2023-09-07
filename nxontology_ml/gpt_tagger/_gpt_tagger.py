@@ -87,6 +87,15 @@ class GptTagger:
         for k, v in resp["usage"].items():
             self._counter[f"ChatCompletion/{k}"] += v  # type: ignore
 
+        for choice in resp["choices"]:
+            finish_reason = choice.get("finish_reason", "")
+            if finish_reason == "length":
+                raise ValueError(
+                    f"The max number of completion tokens available was reached & the response has been truncated. "
+                    f"Hint: You might want to shorten your prompt and/or lower the config's `prompt_token_ratio` "
+                    f"value. Response: \n{resp}"
+                )
+
         # If the model's `n` is >1, we will get several completions ("choices")
         zipped_outputs = zip(
             *[
@@ -100,7 +109,9 @@ class GptTagger:
             labels: list[str] = []
             for node_id, label in outputs:
                 # FIXME: do we hard fail on ID mismatch?
-                assert record_id == node_id, f"ID Mismatch: {resp}"
+                assert (
+                    record_id == node_id
+                ), f"ID Mismatch:\n> Records:\n{records}\n> Response:\n{resp}"
                 labels.append(label)
             self._cache[record] = json.dumps(sorted(labels))
             yield LabelledNode(record_id, labels)
