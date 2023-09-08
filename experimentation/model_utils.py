@@ -7,17 +7,15 @@ label_to_int = {
     "01-disease-subtype": 0,
     "02-disease-root": 1,
     "03-disease-area": 2,
-    "04-non-disease": 3,
 }
 one_h_enc = {
-    "01-disease-subtype": np.array([1, 0, 0, 0]),
-    "02-disease-root": np.array([0, 1, 0, 0]),
-    "03-disease-area": np.array([0, 0, 1, 0]),
-    "04-non-disease": np.array([0, 0, 0, 1]),
+    "01-disease-subtype": np.array([1, 0, 0]),
+    "02-disease-root": np.array([0, 1, 0]),
+    "03-disease-area": np.array([0, 0, 1]),
 }
-CLASS_COUNTS = np.array([7524, 5236, 1603, 6027])  # Counts from whole training set
+CLASS_COUNTS = np.array([7524, 5236, 1603])  # Counts from whole training set
 CLASS_WEIGHTS = CLASS_COUNTS / np.sum(CLASS_COUNTS)
-BIASED_CLASS_WEIGHTS = np.array([0.245, 0.245, 0.5, 0.01])
+BIASED_CLASS_WEIGHTS = np.array([0.25, 0.25, 0.5])
 
 
 def biased_sample_weights(y: list[str]) -> np.ndarray:
@@ -38,9 +36,7 @@ def mean_absolute_error(
     y_probas: np.ndarray,
     class_weight: np.ndarray | None = None,
 ) -> float:
-    class_weight = (
-        class_weight if class_weight is not None else np.array([0.25, 0.25, 0.5, 0])
-    )
+    class_weight = class_weight if class_weight is not None else BIASED_CLASS_WEIGHTS
     y_probas_padded = pad(y_probas, class_weight)
     m = np.mean(np.dot(np.abs(y_true - y_probas_padded), class_weight))
     assert isinstance(m, float)
