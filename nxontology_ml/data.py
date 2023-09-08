@@ -13,6 +13,7 @@ def read_training_data(
     sort: bool = False,
     shuffle: bool = False,
     take: int | None = None,
+    filter_out_non_disease: bool = False,
     nxo: NXOntology[str] | None = None,
     data_path: Path = ROOT_DIR / "data/efo_otar_slim_v3.43.0_rs_classification.tsv",
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -37,6 +38,8 @@ def read_training_data(
                 )
             elif take and len(labels) == take:
                 break
+            elif filter_out_non_disease and rs_classification == "04-non-disease":
+                continue
             else:
                 if efo_otar_slim_id in nodes:
                     labelled_nodes.append(efo_otar_slim_id)

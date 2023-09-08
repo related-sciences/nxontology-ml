@@ -89,7 +89,7 @@ def run_experiments(
     experiments = experiments or EXPERIMENTS
     ##
     # Features
-    X, y = read_training_data(sort=True, take=take)
+    X, y = read_training_data(sort=True, take=take, filter_out_non_disease=True)
 
     for exp_i, exp in enumerate(experiments):
         print("\n##############################")
