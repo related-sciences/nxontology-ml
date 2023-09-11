@@ -21,17 +21,16 @@ def test_e2e_model() -> None:
     )
 
     N = 100
-    X, y = read_training_data(sort=True, take=N + 1)
+    X, y = read_training_data(take=N + 1)
     pipeline.fit(X[:N], y[:N])
     r = pipeline.predict([X[N]])
     assert r.shape == (1, 1)
-    assert r[0][0] == "02-disease-root"
 
     X_t = features_pipeline.transform([X[N]])
     fi = model.get_feature_importance(X=X_t)
     assert fi.shape == (26,)
 
     fp = model.predict_proba(X=X_t)
-    assert np.allclose(fp, np.array([[0.23435558, 0.63125101, 0.07538654, 0.05900687]]))
+    assert np.allclose(fp, np.array([[0.27928858, 0.2454776, 0.32643697, 0.14879685]]))
 
     assert model.model_impl.tree_count_ == 10

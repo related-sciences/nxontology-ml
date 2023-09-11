@@ -1,6 +1,6 @@
 import csv
 import functools
-import random
+from hashlib import sha256
 from pathlib import Path
 
 import numpy as np
@@ -10,14 +10,14 @@ from nxontology_ml.utils import ROOT_DIR
 
 
 def read_training_data(
-    sort: bool = False,
-    shuffle: bool = False,
     take: int | None = None,
     filter_out_non_disease: bool = False,
     nxo: NXOntology[str] | None = None,
     data_path: Path = ROOT_DIR / "data/efo_otar_slim_v3.43.0_rs_classification.tsv",
 ) -> tuple[np.ndarray, np.ndarray]:
-    assert not (sort and shuffle), "Wat??"
+    """
+    By default, the data is (consistently) shuffled
+    """
     # Get Ontology
     nxo = nxo or get_efo_otar_slim()
     nodes: set[str] = set(nxo.graph)
@@ -36,8 +36,6 @@ def read_training_data(
                     "efo_label",
                     "rs_classification",
                 )
-            elif take and len(labels) == take:
-                break
             elif filter_out_non_disease and rs_classification == "04-non-disease":
                 continue
             else:
@@ -45,14 +43,14 @@ def read_training_data(
                     labelled_nodes.append(efo_otar_slim_id)
                     labels.append(rs_classification)
 
-    if shuffle or sort:
-        z = list(zip(labelled_nodes, labels, strict=True))
-        if shuffle:
-            random.shuffle(z)
-        else:
-            assert sort
-            z.sort()
-        labelled_nodes, labels = zip(*z, strict=True)  # type: ignore[assignment]
+    # Consistent shuffling (i.e. sort by hash)
+    z = list(zip(labelled_nodes, labels, strict=True))
+    z.sort(key=lambda nl: sha256(nl[0].encode()).hexdigest())
+    labelled_nodes, labels = zip(*z, strict=True)  # type: ignore[assignment]
+
+    if take:
+        labelled_nodes = labelled_nodes[:take]
+        labels = labels[:take]
     return np.array(labelled_nodes), np.array(labels)
 
 

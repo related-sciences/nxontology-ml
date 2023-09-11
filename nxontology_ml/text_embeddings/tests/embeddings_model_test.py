@@ -24,7 +24,7 @@ def test_embed_node(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
         pretrained_model_name=DEFAULT_EMBEDDING_MODEL,
         cache_path=embeddings_test_cache,
     )
-    X, _ = read_training_data(nxo=nxo, take=10, sort=True)
+    X, _ = read_training_data(nxo=nxo, take=10)
     vecs = np.array([ame.embed_node(nxo.node_info(node_id)) for node_id in X])
     assert vecs.shape == (10, EMBEDDING_SIZES[DEFAULT_EMBEDDING_MODEL])
     # Make sure no network calls were made

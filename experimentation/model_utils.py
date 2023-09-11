@@ -97,7 +97,7 @@ class BiasedMaeMetric:
         clipped_target = np.clip(
             target, a_min=0.0, a_max=3.0, casting="unsafe", dtype=np.int8
         )
-        one_hot_target = np.zeros((size, clipped_target.max() + 1), dtype=np.int8)
+        one_hot_target = np.zeros((size, len(BIASED_CLASS_WEIGHTS)), dtype=np.int8)
         one_hot_target[np.arange(size), clipped_target] = 1
 
         # MAE
