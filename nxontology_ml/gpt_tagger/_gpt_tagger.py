@@ -34,7 +34,6 @@ class GptTagger:
                 on disk in the `./.cache` directory.
             - :class:`_TiktokenBatcher`: This utility class allows to count the amount of token of the records to be
                 labelled. This token count is used for record batching.
-
     """
 
     def __init__(
@@ -79,7 +78,9 @@ class GptTagger:
         if len(buffer) > 0:
             yield from self._do_fetch_record_batch(buffer)
 
-    def _do_fetch_record_batch(self, records: list[str]) -> Iterable[LabelledNode]:
+    def _do_fetch_record_batch(  # noqa: C901
+        self, records: list[str]
+    ) -> Iterable[LabelledNode]:
         """
         Actually request labels for nodes
         """
@@ -121,6 +122,11 @@ class GptTagger:
             elif len(labels) < choice_cnt:
                 warnings.warn(
                     f"Node {record_id} missing from some choices." + rerun_warn_msg,
+                    stacklevel=1,
+                )
+            elif len(labels) > choice_cnt:
+                warnings.warn(
+                    f"Node {record_id} was duplicated." + rerun_warn_msg,
                     stacklevel=1,
                 )
             else:
