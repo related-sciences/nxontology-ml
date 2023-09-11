@@ -8,7 +8,7 @@
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "id|precision\nDOID:0050890|medium\nEFO:0006792|medium\nEFO:0000206|low"
+        "content": "id|precision\nDOID:0050890|medium\nEFO:0006792|medium\nEFO:0000206|low\nEFO:0006795|medium"
       },
       "finish_reason": "stop"
     },
@@ -16,7 +16,7 @@
       "index": 1,
       "message": {
         "role": "assistant",
-        "content": "id|precision\nDOID:0050890|high\nEFO:0006793|medium\nEFO:0000206|medium"
+        "content": "id|precision\nDOID:0050890|high\nEFO:0006793|medium\nEFO:0000206|medium\nEFO:0006795|medium\nEFO:0006795|medium"
       },
       "finish_reason": "stop"
     }

@@ -85,7 +85,7 @@ def test_fetch_many_records() -> None:
             "Cache/get": 100,
             "Cache/misses": 100,
             "ChatCompletion/records_processed": 100,
-            "Cache/set": 100,
+            "Cache/set": 1,
             "ChatCompletion/completion_tokens": 84,
             "ChatCompletion/create_requests": 4,
         }
@@ -152,8 +152,10 @@ def test_resp_id_mismatch() -> None:
     valid_resp_node = "DOID:0050890"
     missing_one_node = "EFO:0006793"
     missing_all_node = "EFO:0006794"
+    duplicated_node = "EFO:0006795"
     nodes = [
-        nxo.node_info(n) for n in [valid_resp_node, missing_one_node, missing_all_node]
+        nxo.node_info(n)
+        for n in [valid_resp_node, missing_one_node, missing_all_node, duplicated_node]
     ]
     with pytest.warns() as warns:
         output = list(tagger.fetch_labels(nodes))
@@ -163,7 +165,7 @@ def test_resp_id_mismatch() -> None:
         assert output == expected_output
 
         # Verify warnings
-        assert len(warns) == 4
+        assert len(warns) == 5
         warns = sorted(warns, key=lambda w: w.message.args[0])  # type: ignore
         _assert_user_warning_starts_with(
             warns[0], "Node EFO:0000206 was part of this output but shouldn't be."
@@ -177,3 +179,4 @@ def test_resp_id_mismatch() -> None:
         _assert_user_warning_starts_with(
             warns[3], "Node EFO:0006794 missing from response"
         )
+        _assert_user_warning_starts_with(warns[4], "Node EFO:0006795 was duplicated")
