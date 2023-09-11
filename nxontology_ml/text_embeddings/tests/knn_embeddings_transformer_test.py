@@ -25,7 +25,7 @@ def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
         cache_path=embeddings_test_cache,
     )
     pnf = PrepareNodeFeatures(nxo)
-    X, y = read_training_data(nxo=nxo, take=10, sort=True)
+    X, y = read_training_data(nxo=nxo, take=10)
 
     ##
     # Main test

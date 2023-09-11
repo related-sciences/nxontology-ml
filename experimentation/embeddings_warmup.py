@@ -16,7 +16,7 @@ def warmup_cache(
         DEFAULT_EMBEDDING_MODEL,
     )
     nxo = get_efo_otar_slim()
-    X, _ = read_training_data(sort=True, take=take)
+    X, _ = read_training_data(take=take)
     for node_id in tqdm(X, desc="Fetching node embeddings", delay=0.1):
         ame.embed_node(nxo.node_info(node_id))
     print(ame._counter)

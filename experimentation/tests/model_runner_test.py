@@ -16,6 +16,7 @@ def test_run_experiments(tmp_path: Path) -> None:
             base_dir=tmp_path,
         )
     ]
-    run_experiments(experiments, ame=ame, take=20, n_splits=2)
+    # Note about `take`: We need enough points so that both splits have over 1 class
+    run_experiments(experiments, ame=ame, take=50, n_splits=2)
     # Make sure no call was made over the wire
     assert dict(ame._counter) == {}
