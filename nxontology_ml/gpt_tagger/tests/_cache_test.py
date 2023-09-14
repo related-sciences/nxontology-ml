@@ -7,7 +7,7 @@ from nxontology_ml.utils import ROOT_DIR
 
 
 def test_from_config() -> None:
-    expected_cache_path = ROOT_DIR / ".cache/precision_v1.ldb"
+    expected_cache_path = ROOT_DIR / ".cache/precision_v1_n1.ldb"
     cache = _Cache.from_config(precision_config)
     assert isinstance(cache._storage, LazyLSM)
     assert Path(cache._storage._filename) == expected_cache_path
@@ -17,7 +17,7 @@ def test_from_config() -> None:
 
 def test_main() -> None:
     with TemporaryDirectory() as tmpdir:
-        cache_path = Path(tmpdir) / "precision_v1.ldb"
+        cache_path = Path(tmpdir) / "precision_v1_n1.ldb"
         cache = _Cache.from_config(precision_config, cache_path=cache_path)
 
         assert cache.get("KEY", "DEFAULT") == "DEFAULT"

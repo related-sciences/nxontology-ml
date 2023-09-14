@@ -15,7 +15,11 @@ from nxontology_ml.gpt_tagger._openai_models import (
     Response,
 )
 from nxontology_ml.gpt_tagger._utils import node_to_str_fn
-from nxontology_ml.gpt_tagger.tests._utils import mk_stub_ccm, precision_config
+from nxontology_ml.gpt_tagger.tests._utils import (
+    mk_stub_ccm,
+    precision_config,
+    sanitize_json_format,
+)
 from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
 
 
@@ -71,7 +75,7 @@ def test_create() -> None:
     stub_payload_json["temperature"] = 1
     stub_payload_json["top_p"] = 2
     stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore
-    stub_content = {json.dumps(stub_payload_json): stub_resp}
+    stub_content = {sanitize_json_format(stub_payload_json): stub_resp}
 
     ccm = mk_stub_ccm(config=config, stub_content=stub_content)
     node_to_str = node_to_str_fn(config=config)

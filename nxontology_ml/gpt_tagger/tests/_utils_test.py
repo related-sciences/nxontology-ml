@@ -12,7 +12,7 @@ from nxontology_ml.tests.utils import get_test_nodes
 
 
 def test_config_to_cache_namespace() -> None:
-    assert config_to_cache_namespace(precision_config) == "precision_v1"
+    assert config_to_cache_namespace(precision_config) == "precision_v1_n1"
 
 
 def test_node_to_str_fn() -> None:
