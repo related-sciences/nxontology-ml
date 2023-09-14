@@ -1,6 +1,6 @@
 import json
 from collections import Counter
-from typing import ParamSpecKwargs
+from typing import Any, ParamSpecKwargs
 
 from nxontology_ml.gpt_tagger._cache import _Cache
 from nxontology_ml.gpt_tagger._chat_completion_middleware import (
@@ -22,6 +22,14 @@ precision_config = TaskConfig(
 )
 
 
+def sanitize_json_format(s: str | dict[str, Any]) -> str:
+    """Remove formatting & sort keys"""
+    if isinstance(s, str):
+        s = json.loads(s)
+    assert isinstance(s, dict)
+    return json.dumps(dict(sorted(s.items())))
+
+
 def mk_stub_ccm(
     config: TaskConfig | None = None,
     stub_content: dict[str, Response] | None = None,
@@ -32,13 +40,13 @@ def mk_stub_ccm(
     if not stub_content:
         stub_payload_json = read_test_resource("precision_payload.json")
         stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore
-        stub_content = {stub_payload_json: stub_resp}
+        stub_content = {sanitize_json_format(stub_payload_json): stub_resp}
     ccm = _ChatCompletionMiddleware.from_config(config, counter)
     # Remove json formatting
-    stub_content = {json.dumps(json.loads(k)): v for k, v in stub_content.items()}
+    stub_content = {sanitize_json_format(k): v for k, v in stub_content.items()}
 
     def create_fn_stub(**kwargs: ParamSpecKwargs) -> Response:
-        return stub_content[json.dumps(kwargs)]
+        return stub_content[sanitize_json_format(kwargs)]
 
     ccm._create_fn = create_fn_stub  # type: ignore
     return ccm

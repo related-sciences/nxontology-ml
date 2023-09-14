@@ -44,7 +44,7 @@ class TaskConfig:
     model_top_p: float | None = None
 
     # See https://platform.openai.com/docs/api-reference/chat/create#n
-    model_n: int | None = None
+    model_n: int = 1
 
     # The max number of tokens in the prompt conditions how many token are left for the completion
     #   e.g. If using at most 6553 tokens (8192 * .8) for the prompt, 1639 tokens (8192 - 6553) are

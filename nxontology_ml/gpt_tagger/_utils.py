@@ -20,7 +20,7 @@ def config_to_cache_namespace(config: TaskConfig) -> str:
         - Neither the prompt path nor content are part of the cache namespace
         - Rationale: Allow the prompt to be changeable / movable independent of content & location
     """
-    return quote_plus(f"{config.name}_{config.prompt_version}")
+    return quote_plus(f"{config.name}_{config.prompt_version}_n{config.model_n}")
 
 
 def node_to_str_fn(
