@@ -153,9 +153,16 @@ def test_resp_id_mismatch() -> None:
     missing_one_node = "EFO:0006793"
     missing_all_node = "EFO:0006794"
     duplicated_node = "EFO:0006795"
+    wrong_label_node = "EFO:0006796"
     nodes = [
         nxo.node_info(n)
-        for n in [valid_resp_node, missing_one_node, missing_all_node, duplicated_node]
+        for n in [
+            valid_resp_node,
+            missing_one_node,
+            missing_all_node,
+            duplicated_node,
+            wrong_label_node,
+        ]
     ]
     with pytest.warns() as warns:
         output = list(tagger.fetch_labels(nodes))
@@ -165,18 +172,24 @@ def test_resp_id_mismatch() -> None:
         assert output == expected_output
 
         # Verify warnings
-        assert len(warns) == 5
+        assert len(warns) == 7
         warns = sorted(warns, key=lambda w: w.message.args[0])  # type: ignore
         _assert_user_warning_starts_with(
-            warns[0], "Node EFO:0000206 was part of this output but shouldn't be."
+            warns[0], "Label 'na' does not belong to `allowed_labels`."
         )
         _assert_user_warning_starts_with(
-            warns[1], "Node EFO:0006792 was part of this output but shouldn't be."
+            warns[1], "Node EFO:0000206 was part of this output but shouldn't be."
         )
         _assert_user_warning_starts_with(
-            warns[2], "Node EFO:0006793 missing from some choices"
+            warns[2], "Node EFO:0006792 was part of this output but shouldn't be."
         )
         _assert_user_warning_starts_with(
-            warns[3], "Node EFO:0006794 missing from response"
+            warns[3], "Node EFO:0006793 missing from some choices"
         )
-        _assert_user_warning_starts_with(warns[4], "Node EFO:0006795 was duplicated")
+        _assert_user_warning_starts_with(
+            warns[4], "Node EFO:0006794 missing from response"
+        )
+        _assert_user_warning_starts_with(warns[5], "Node EFO:0006795 was duplicated")
+        _assert_user_warning_starts_with(
+            warns[6], "Node EFO:0006796 missing from some choices"
+        )

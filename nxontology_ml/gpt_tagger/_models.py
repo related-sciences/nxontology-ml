@@ -57,6 +57,9 @@ class TaskConfig:
     # The node features will be used as cache key if not hashed.
     cache_key_hash_fn: str | None = "sha1"
 
+    # Allowed labels: If provided, all output labels must belong to this set
+    allowed_labels: frozenset[str] | None = None
+
 
 @dataclass
 class LabelledNode:

@@ -2,7 +2,7 @@ import json
 import logging
 import warnings
 from collections import Counter, defaultdict
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from copy import deepcopy
 
 from nxontology.node import NodeInfo, NodeT
@@ -41,7 +41,7 @@ class GptTagger:
         chat_completion_middleware: _ChatCompletionMiddleware,
         cache: _Cache,
         batcher: _TiktokenBatcher,
-        node_to_str_fn: Callable[[NodeInfo[NodeT]], str],
+        config: TaskConfig,
         counter: Counter[str],
     ):
         """
@@ -50,7 +50,7 @@ class GptTagger:
         self._chat_completion_middleware = chat_completion_middleware
         self._cache = cache
         self._batcher = batcher
-        self._node_to_str_fn = node_to_str_fn
+        self._config = config
         self._counter = counter
 
     def fetch_labels(self, nodes: Iterable[NodeInfo[NodeT]]) -> Iterable[LabelledNode]:
@@ -59,7 +59,7 @@ class GptTagger:
         """
         buffer: list[str] | None
         for node in nodes:
-            node_str = self._node_to_str_fn(node)
+            node_str = node_to_str_fn(self._config)(node)
             labels_str = self._cache.get(node_str)
             if labels_str:
                 labels: list[str] = json.loads(labels_str)
@@ -107,7 +107,17 @@ class GptTagger:
             for node_id, label in parse_model_output(
                 choice["message"]["content"].splitlines()
             ):
-                labels_by_nodes[node_id].append(label)
+                label = label.lower()
+                if (
+                    self._config.allowed_labels
+                    and label not in self._config.allowed_labels
+                ):
+                    warnings.warn(
+                        f"Label '{label}' does not belong to `allowed_labels`.",
+                        stacklevel=1,
+                    )
+                else:
+                    labels_by_nodes[node_id].append(label)
 
         # Handle missing & valid records
         rerun_warn_msg = " Hint: It is strongly recommended to rerun node tagging to fix the inconsistent nodes."
@@ -164,6 +174,6 @@ class GptTagger:
             ),
             cache=_Cache.from_config(config, counter),
             batcher=_TiktokenBatcher.from_config(config),
-            node_to_str_fn=node_to_str_fn(config),
+            config=config,
             counter=counter,
         )
