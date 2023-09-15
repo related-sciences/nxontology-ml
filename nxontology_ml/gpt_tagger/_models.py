@@ -60,6 +60,9 @@ class TaskConfig:
     # Allowed labels: If provided, all output labels must belong to this set
     allowed_labels: frozenset[str] | None = None
 
+    # If present, only the text after the `end_of_cot_marker` will be parsed (useful for "chain of thoughts" prompts)
+    end_of_cot_marker: str | None = None
+
 
 @dataclass
 class LabelledNode:

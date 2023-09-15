@@ -104,8 +104,15 @@ class GptTagger:
         # Extract labels from each choice
         labels_by_nodes: dict[str, list[str]] = defaultdict(list)
         for choice in resp["choices"]:
+            choice_content = choice["message"]["content"]
+            # If there is a Chain of Thoughts marker, we only parse the content after the marker
+            if self._config.end_of_cot_marker:
+                assert self._config.end_of_cot_marker in choice_content
+                _, choice_content = choice_content.split(
+                    sep=self._config.end_of_cot_marker, maxsplit=2
+                )
             for node_id, label in parse_model_output(
-                choice["message"]["content"].splitlines()
+                choice_content.strip().splitlines()
             ):
                 label = label.lower()
                 if (

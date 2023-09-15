@@ -55,3 +55,27 @@ def test_readme_code_it() -> None:
     # Inspect metrics
     print("\nTagger metrics:")
     pprint(tagger.get_metrics())
+
+
+@pytest.mark.skip(reason="IT: Makes a real openai api call")
+def test_cot_precision_it() -> None:
+    logging.basicConfig(level=logging.DEBUG)
+    # Create a config for EFO nodes labelling
+    cot_config = TaskConfig(
+        name="cot_precision",
+        prompt_path=ROOT_DIR / "prompts/rav_cot_precision_v1.txt",
+        openai_model_name="gpt-4",
+        node_attributes=["efo_id", "efo_label", "efo_definition"],
+        model_n=2,
+        prompt_token_ratio=0.4,
+        end_of_cot_marker="<END_OF_COT>",
+    )
+
+    nxo = get_efo_otar_slim()
+    nodes = (nxo.node_info(node) for node in sorted(nxo.graph)[:10])
+    tagger = GptTagger.from_config(cot_config)
+    for ln in tagger.fetch_labels(nodes):
+        print(f"{ln.node_efo_id}: {ln.labels}")
+
+    print("\nTagger metrics:")
+    pprint(tagger.get_metrics())

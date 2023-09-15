@@ -1,0 +1,73 @@
+A list of records will be provided from an ontology of disease terms. Each record will contain information describing a single term.
+
+Assign a `precision` label to each of these terms that captures the extent to which they correspond to patient populations with distinguishing clinical, demographic, physiological or molecular characteristics. Use exactly one of the following values for this label:
+
+- `high`: High precision terms have the greatest ontological specificity, sometimes (but not necessarily) correspond to small groups of relatively homogeneous patients, often have greater diagnostic certainty and typically represent the forefront of clinical practice.
+- `medium`: Medium precision terms are the ontological ancestors of `high` precision terms (if any are known), often include indications in later stage clinical trials and generally reflect groups of patients assumed to be suffering from a condition with a shared, or at least similar, physiological or environmental origin.
+- `low`: Low precision terms are the ontological ancestors of both `medium` and `high` precision terms, group collections of diseases with *some* shared characteristics and typically connote a relatively heterogenous patient population. They are often terms used within the ontology for organizational purposes.
+
+The records provided will already have the following fields:
+
+- `id`: A string identifier for the term
+- `label`: A descriptive name for the term
+- `description`: A longer, possibly truncated description of what the term is; may be NA (i.e. absent)
+
+Here is a list of such records (in YAML format) where the `precision` label is already assigned for 3 examples at each level of precision:
+
+--- BEGIN EXAMPLES ---
+- id: EFO:1000639
+  label: acquired metabolic disease
+  definition: A disease of metabolism that has _material_basis_in enzyme deficiency or accumulation of enzymes or toxins which interfere with normal function due to an endocrine organ disease, organ malfunction, inadequate intake, dietary deficiency, or ...
+  precision: low
+- id: Orphanet:68336
+  label: Rare genetic tumor
+  definition: NA
+  precision: low
+- id: EFO:0005548
+  label: developmental disorder of mental health
+  definition: A disease of mental health that occur during a child’s developmental period between birth and age 18 resulting in retarding of the child’s
+  precision: low
+- id: EFO:0005548
+  label: inflammatory bowel disease
+  definition: A spectrum of small and large bowel inflammatory diseases of unknown etiology. It includes Crohn's disease, ulcerative colitis, and colitis of indeterminate type.
+  precision: medium
+- id: EFO:000384
+  label: Crohn's disease
+  definition: A gastrointestinal disorder characterized by chronic inflammation involving all layers of the intestinal wall, noncaseating granulomas affecting the intestinal wall and regional lymph nodes, and transmural fibrosis. Crohn disease most ...
+  precision: medium
+- id: MONDO:0045020
+  label: glycine metabolism disease
+  definition: A disease that has its basis in the disruption of glycine metabolic process.
+  precision: medium
+- id: EFO:1000277
+  label: Gastric Small Cell Neuroendocrine Carcinoma
+  definition: An aggressive, high-grade and poorly differentiated carcinoma with neuroendocrine differentiation that arises from the stomach. It is characterized by the presence of malignant small cells.
+  precision: high
+- id: MONDO:0015634
+  label: isolated osteopoikilosis
+  definition: A osteopoikilosis (disease) that is not part of a larger syndrome.
+  precision: high
+- id: Orphanet:98755
+  label: Spinocerebellar ataxia type 1
+  definition: Spinocerebellar ataxia type 1 (SCA1) is a subtype of type I autosomal dominant cerebellar ataxia (ADCA type I; see this term) characterized by dysarthria, writing difficulties, limb ataxia, and commonly nystagmus and saccadic abnormalities.
+  precision: high
+--- END EXAMPLES ---
+
+Here are the records for which this `precision` label is not yet known:
+
+--- BEGIN RECORDS ---
+{records}
+--- END RECORDS ---
+
+As a detail-oriented and disease ontology expert, for each record, you must provide a paragraph where you assign the precision and provide your reasoning, think step by step, be methodological. The order of the paragraphs must be the same as the order in the list above.
+
+Finally when you are done with ALL the explanations for ALL records, write `<END_OF_COT>`, followed by a CSV with the following requirements:
+- Assign a `precision` label for ALL records, using your reasoning above.
+- Respect the original order of the records (avoid duplicates and missing records)
+- The only valid values in the `precision` column are: `high`, `medium`, `low` (i.e. avoid any other value, such as `NA`).
+- Respond in CSV format using a pipe (i.e. "|") delimiter with the headers `id`, `precision` where `id` is the `id` associated with each record
+- Include the headers in the result
+- Avoid any extra lines or content between the `<END_OF_COT>` marker and the CSV headers
+- Respond with ONLY the CSV content, do not include explanations of any kind
+
+ CSV:

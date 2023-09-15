@@ -48,7 +48,11 @@ def parse_model_output(
     # At the moment, only support "val1|val2"
     start_idx = 1 if skip_header else 0
     for line in islice(model_output, start_idx, None):
-        node_id, label = line.split(sep="|", maxsplit=2)
+        if len(line.strip()) == 0:
+            continue
+        tokens = line.split(sep="|", maxsplit=2)
+        assert len(tokens) == 2, f"Not enough values to unpack from '{line}'"
+        node_id, label = tokens
         yield node_id, label
 
 
