@@ -10,7 +10,6 @@ from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import TaskConfig
 from nxontology_ml.gpt_tagger._openai_models import Response
 from nxontology_ml.gpt_tagger._tiktoken_batcher import _TiktokenBatcher
-from nxontology_ml.gpt_tagger._utils import node_to_str_fn
 from nxontology_ml.tests.utils import get_test_resource_path, read_test_resource
 
 precision_config = TaskConfig(
@@ -19,6 +18,7 @@ precision_config = TaskConfig(
     node_attributes=["efo_id", "efo_label", "efo_definition"],
     openai_model_name="gpt-3.5-turbo",
     model_temperature=0,
+    allowed_labels=frozenset({"low", "medium", "high"}),
 )
 
 
@@ -70,6 +70,6 @@ def mk_test_gpt_tagger(
             counter=counter,
         ),
         batcher=_TiktokenBatcher.from_config(precision_config),
-        node_to_str_fn=node_to_str_fn(precision_config),
+        config=precision_config,
         counter=counter,
     )
