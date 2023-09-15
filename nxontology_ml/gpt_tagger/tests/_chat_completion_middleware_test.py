@@ -2,9 +2,11 @@ import json
 import re
 from collections import Counter
 from copy import copy
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
+from _pytest._py.path import LocalPath
 
 from nxontology_ml.gpt_tagger._chat_completion_middleware import (
     _ChatCompletionMiddleware,
@@ -36,6 +38,7 @@ def _mk_test_ccm(
         partial_payload=partial_payload,
         prompt_template=prompt_template or "foo {records} bar",
         create_fn=Mock,
+        logs_path=None,
         counter=Counter(),
     )
 
@@ -64,10 +67,12 @@ def test_ctor_verify() -> None:
         _mk_test_ccm(prompt_template="foo")
 
 
-def test_create() -> None:
+def test_create(tmpdir: LocalPath) -> None:
+    logdir = Path(tmpdir) / "logs"
     config = copy(precision_config)
     config.model_temperature = 1
     config.model_top_p = 2
+    config.logs_path = logdir
 
     stub_payload_json = ChatCompletionsPayload(  # type: ignore
         **json.loads(read_test_resource("precision_payload.json"))
@@ -75,15 +80,27 @@ def test_create() -> None:
     stub_payload_json["temperature"] = 1
     stub_payload_json["top_p"] = 2
     stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore
-    stub_content = {sanitize_json_format(stub_payload_json): stub_resp}
+    json_request = sanitize_json_format(stub_payload_json)
+    stub_content = {json_request: stub_resp}
 
     ccm = mk_stub_ccm(config=config, stub_content=stub_content)
     node_to_str = node_to_str_fn(config=config)
     resp = ccm.create(records=(node_to_str(n) for n in get_test_nodes()))
-    stub_resp = Response(  # type: ignore
-        **json.loads(read_test_resource("precision_resp.json")),
-    )
+    json_resp = sanitize_json_format(read_test_resource("precision_resp.json"))
+    stub_resp = Response(**json.loads(json_resp))  # type: ignore
     assert resp == stub_resp
+
+    # Test logs
+    json_files = sorted(logdir.rglob("*.json"))
+    assert len(json_files) == 2
+
+    request_file = json_files[0]
+    assert request_file.relative_to(logdir).as_posix().startswith("requests/")
+    assert sanitize_json_format(request_file.read_text()) == json_request
+
+    resp_file = json_files[1]
+    assert resp_file.relative_to(logdir).as_posix().startswith("responses/")
+    assert sanitize_json_format(resp_file.read_text()) == json_resp
 
 
 def test_from_config() -> None:

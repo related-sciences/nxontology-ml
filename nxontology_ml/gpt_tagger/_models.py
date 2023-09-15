@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+from nxontology_ml.utils import ROOT_DIR
+
+LOG_DIR = ROOT_DIR / "logs/openai-api"
+
 
 @dataclass
 class TaskConfig:
@@ -62,6 +66,9 @@ class TaskConfig:
 
     # If present, only the text after the `end_of_cot_marker` will be parsed (useful for "chain of thoughts" prompts)
     end_of_cot_marker: str | None = None
+
+    # Optionally persist logs to disk
+    logs_path: Path | None = LOG_DIR
 
 
 @dataclass
