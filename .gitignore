@@ -56,3 +56,5 @@ Thumbs.db
 
 # Models
 catboost_info/
+
+logs/

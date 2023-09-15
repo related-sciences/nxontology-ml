@@ -4,6 +4,7 @@ from collections import Counter
 from collections.abc import Callable, Iterable
 from copy import copy
 from os import _Environ
+from pathlib import Path
 from string import Formatter
 
 import dotenv
@@ -17,7 +18,10 @@ from nxontology_ml.gpt_tagger._openai_models import (
     ChatCompletionsPayload,
     Response,
 )
-from nxontology_ml.gpt_tagger._utils import counter_or_empty
+from nxontology_ml.gpt_tagger._utils import (
+    counter_or_empty,
+    log_json_if_enabled,
+)
 from nxontology_ml.utils import ROOT_DIR
 
 CREATE_FN_TYPE = Callable[[ChatCompletionsPayload], Response]
@@ -41,6 +45,7 @@ class _ChatCompletionMiddleware:
         partial_payload: ChatCompletionsPayload,
         prompt_template: str,
         create_fn: CREATE_FN_TYPE,
+        logs_path: Path | None,
         counter: Counter[str],
     ):
         """
@@ -51,6 +56,7 @@ class _ChatCompletionMiddleware:
         self._partial_payload = partial_payload
         self._prompt_template = prompt_template
         self._create_fn = create_fn
+        self._logs_path = logs_path
         self._counter = counter
 
     def create(self, records: Iterable[str]) -> Response:
@@ -62,8 +68,11 @@ class _ChatCompletionMiddleware:
         self._counter["ChatCompletion/create_requests"] += 1
         self._counter["ChatCompletion/records_processed"] += len(record_list)
         logging.debug(f"Sending {len(record_list)} to OpenAI's ChatCompletion API")
+        log_json_if_enabled(self._logs_path, "requests", payload)
+        resp = self._create_fn(**payload)  # type: ignore
+        log_json_if_enabled(self._logs_path, "responses", resp)
         # FIXME: Would we want to support async io?
-        return self._create_fn(**payload)  # type: ignore
+        return resp
 
     @classmethod
     def from_config(
@@ -96,6 +105,7 @@ class _ChatCompletionMiddleware:
             partial_payload=partial_payload,
             prompt_template=config.prompt_path.read_text(),
             create_fn=openai.ChatCompletion.create,
+            logs_path=config.logs_path,
             counter=counter_or_empty(counter),
         )
 

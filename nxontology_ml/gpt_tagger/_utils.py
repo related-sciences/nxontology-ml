@@ -1,7 +1,11 @@
+import json
+import logging
 import sys
 from collections import Counter
 from collections.abc import Callable, Iterable
+from datetime import datetime
 from itertools import islice
+from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -79,3 +83,15 @@ def counter_or_empty(counter: Counter[str] | None) -> Counter[str]:
     if counter is None:
         return Counter()
     return counter
+
+
+def log_json_if_enabled(
+    logs_path: Path | None,
+    dirname: str,
+    obj: Any,
+) -> None:
+    if logs_path:
+        file_path = logs_path / dirname / f"{datetime.utcnow().isoformat()}.json"
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        logging.debug(f"logging json to {file_path}")
+        file_path.write_text(json.dumps(obj, indent=2))

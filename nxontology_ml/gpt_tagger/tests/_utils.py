@@ -19,6 +19,7 @@ precision_config = TaskConfig(
     openai_model_name="gpt-3.5-turbo",
     model_temperature=0,
     allowed_labels=frozenset({"low", "medium", "high"}),
+    logs_path=None,  # Don't log during tests (unless integration)
 )
 
 
