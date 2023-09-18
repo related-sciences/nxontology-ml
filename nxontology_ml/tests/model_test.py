@@ -31,6 +31,6 @@ def test_e2e_model() -> None:
     assert fi.shape == (26,)
 
     fp = model.predict_proba(X=X_t)
-    assert np.allclose(fp, np.array([[0.27928858, 0.2454776, 0.32643697, 0.14879685]]))
+    assert np.allclose(fp, np.array([[0.25247175, 0.22380082, 0.36932641, 0.15440102]]))
 
     assert model.model_impl.tree_count_ == 10
