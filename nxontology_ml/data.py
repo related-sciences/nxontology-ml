@@ -54,7 +54,7 @@ def read_training_data(
     return np.array(labelled_nodes), np.array(labels)
 
 
-EFO_OTAR_SLIM_URL: str = "https://github.com/related-sciences/nxontology-data/raw/f0e450fe3096c3b82bf531bc5125f0f7e916aad8/efo_otar_slim.json"
+EFO_OTAR_SLIM_URL: str = "https://github.com/related-sciences/nxontology-data/raw/2ce01d8495024d46cbc54fb0c26a92500ad717e0/efo_otar_slim.json"
 
 
 @functools.cache
