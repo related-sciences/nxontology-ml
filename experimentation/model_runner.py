@@ -7,7 +7,11 @@ from transformers import Pipeline
 from experimentation.metadata_helpers import ExperimentMetadata, ModelMetadataBuilder
 from nxontology_ml.data import read_training_data
 from nxontology_ml.efo import NodeXrefFeatures
-from nxontology_ml.features import NodeInfoFeatures, PrepareNodeFeatures
+from nxontology_ml.features import (
+    NodeInfoFeatures,
+    PrepareNodeFeatures,
+    SubsetsFeatures,
+)
 from nxontology_ml.model import CatBoostDataFormatter
 from nxontology_ml.text_embeddings.embeddings_model import AutoModelEmbeddings
 from nxontology_ml.text_embeddings.knn_embeddings_transformer import (
@@ -18,64 +22,66 @@ from nxontology_ml.text_embeddings.text_embeddings_transformer import (
 )
 
 EXPERIMENTS = [
-    ExperimentMetadata(
-        name_override="baseline",
-        eval_metric="MultiClass",
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-    ),
+    # ExperimentMetadata(
+    #     name_override="baseline",
+    #     eval_metric="MultiClass",
+    # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    # ),
     # ExperimentMetadata(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     # ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        use_knn=True,
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        use_lda=True,
-        embedding_enabled=True,
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        embedding_enabled=True,
-        pca_components=32,
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        embedding_enabled=True,
-        pca_components=64,
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        embedding_enabled=True,
-        pca_components=128,
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        embedding_enabled=True,
-        pca_components=256,
-    ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        embedding_enabled=True,
-        pca_components=64,
-        use_knn=True,
-    ),
-    # ExperimentMetadata(  # Slowest => Last
+    # ExperimentMetadata(
     #     eval_metric="BiasedMaeMetric",
-    #     depth=7,
+    #     # depth=7,
+    #     use_knn=True,
+    # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     use_lda=True,
     #     embedding_enabled=True,
     # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     embedding_enabled=True,
+    #     pca_components=32,
+    # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     embedding_enabled=True,
+    #     pca_components=64,
+    # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     embedding_enabled=True,
+    #     pca_components=128,
+    # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     embedding_enabled=True,
+    #     pca_components=256,
+    # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     embedding_enabled=True,
+    #     pca_components=64,
+    #     use_knn=True,
+    # ),
+    ExperimentMetadata(
+        eval_metric="BiasedMaeMetric",
+        # depth=7,
+        embedding_enabled=True,
+        pca_components=64,
+        subsets_enabled=True,
+    ),
 ]
 
 
@@ -115,6 +121,7 @@ def run_experiments(
                 PrepareNodeFeatures(),
                 NodeInfoFeatures(),
                 NodeXrefFeatures(),
+                SubsetsFeatures(enabled=exp.subsets_enabled),
                 TextEmbeddingsTransformer.from_config(
                     enabled=exp.embedding_enabled,
                     pca_components=exp.pca_components,

@@ -66,6 +66,7 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
     pca_components: int | None = None
     use_lda: bool = False
     use_knn: bool = False
+    subsets_enabled: bool = False
     depth: int = 6
     eval_metric: str = "MultiClass"
     base_dir: Path = EXPERIMENT_MODEL_DIR
@@ -83,6 +84,8 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
             parts.append("full_embedding")
         if self.use_knn:
             parts.append("knn")
+        if self.subsets_enabled:
+            parts.append("subsets")
         if self.depth != 6:
             parts.append(f"d{self.depth}")
         if self.eval_metric == "BiasedMaeMetric":
