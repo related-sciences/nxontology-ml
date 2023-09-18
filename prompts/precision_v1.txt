@@ -1,3 +1,4 @@
+prompts/precision_v1.txtprompts/precision_v2.txt
 A list of records will be provided from an ontology of disease terms. Each record will contain information describing a single term.
 
 Assign a `precision` label to each of these terms that captures the extent to which they correspond to patient populations with distinguishing clinical, demographic, physiological or molecular characteristics. Use exactly one of the following values for this label:
@@ -27,6 +28,10 @@ Here is a list of such records (in YAML format) where the `precision` label is a
   label: developmental disorder of mental health
   definition: A disease of mental health that occur during a child’s developmental period between birth and age 18 resulting in retarding of the child’s
   precision: low
+- id: EFO:0011057
+  label: neurotoxicity
+  definition: Toxicity that causes injury to the central or peripheral nervous system or damages its function.
+  precision: low
 - id: EFO:0005548
   label: inflammatory bowel disease
   definition: A spectrum of small and large bowel inflammatory diseases of unknown etiology. It includes Crohn's disease, ulcerative colitis, and colitis of indeterminate type.
@@ -39,6 +44,14 @@ Here is a list of such records (in YAML format) where the `precision` label is a
   label: glycine metabolism disease
   definition: A disease that has its basis in the disruption of glycine metabolic process.
   precision: medium
+- id: MONDO:0002321
+  label: sensory peripheral neuropathy
+  definition: Inflammation or degeneration of the sensory nerves.
+  precision: medium
+- id: EFO:1000646
+  label: papillary carcinoma
+  definition: A malignant epithelial neoplasm characterized by a papillary growth pattern.
+  precision: medium
 - id: EFO:1000277
   label: Gastric Small Cell Neuroendocrine Carcinoma
   definition: An aggressive, high-grade and poorly differentiated carcinoma with neuroendocrine differentiation that arises from the stomach. It is characterized by the presence of malignant small cells.
@@ -50,6 +63,18 @@ Here is a list of such records (in YAML format) where the `precision` label is a
 - id: Orphanet:98755
   label: Spinocerebellar ataxia type 1
   definition: Spinocerebellar ataxia type 1 (SCA1) is a subtype of type I autosomal dominant cerebellar ataxia (ADCA type I; see this term) characterized by dysarthria, writing difficulties, limb ataxia, and commonly nystagmus and saccadic abnormalities.
+  precision: high
+- id: Orphanet:75325
+  label: Osteosclerosis - ichthyosis - premature ovarian failure
+  definition: NA
+  precision: high
+- id: EFO:0007237
+  label: dipetalonemiasis
+  definition: A filariasis that is a zoonotic infection caused by the nematode of the genus Dipetalonema.
+  precision: high
+- id: MONDO:0013742
+  label: familial mesial temporal lobe epilepsy with febrile seizures
+  definition: NA
   precision: high
 --- END EXAMPLES ---
 
