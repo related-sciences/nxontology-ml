@@ -57,13 +57,17 @@ class DataFrameFnTransformer(NoFitTransformer[NodeFeatures, NodeFeatures]):
         num_features_names: list[str] | None = None,
         cat_features_fn: Callable[[NodeInfo[str]], np.array] | None = None,
         cat_features_names: list[str] | None = None,
+        enabled: bool = True,
     ):
         self._num_features_fn = num_features_fn
         self._num_features_names = num_features_names
         self._cat_features_fn = cat_features_fn
         self._cat_features_names = cat_features_names
+        self._enabled = enabled
 
     def transform(self, X: NodeFeatures, copy: bool | None = None) -> NodeFeatures:
+        if not self._enabled:
+            return X
         if self._num_features_fn:
             assert self._num_features_names
             new_features = pd.DataFrame(

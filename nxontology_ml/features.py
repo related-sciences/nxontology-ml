@@ -50,3 +50,40 @@ class PrepareNodeFeatures(NoFitTransformer[list[str], NodeFeatures]):
     def transform(self, X: list[str], copy: bool | None = None) -> NodeFeatures:
         # X are nodes
         return NodeFeatures.from_nodes(nodes=[self._nxo.node_info(n) for n in X])
+
+
+class SubsetsFeatures(DataFrameFnTransformer):
+    """
+    Adds boolean features to encode EFO subsets inclusion
+    See. https://github.com/related-sciences/nxontology-ml/issues/14
+    """
+
+    def __init__(self, enabled: bool = True) -> None:
+        super().__init__(
+            num_features_fn=self._subset_features,
+            num_features_names=self._feature_names(),
+            enabled=enabled,
+        )
+
+    FILTERED_SUBSETS = [
+        "mondo#disease_grouping",
+        "mondo#gard_rare",
+        "mondo#ordo_etiological_subtype",
+        "mondo#ordo_group_of_disorders",
+    ]
+    FILTERED_SUBSETS_IDX = {s: i for i, s in enumerate(FILTERED_SUBSETS)}
+
+    @classmethod
+    def _subset_features(cls, n: NodeInfo[str]) -> np.array:
+        features = np.zeros(len(cls.FILTERED_SUBSETS), dtype=np.uint8)
+        subsets: list[str] | None = n.data.get("subsets", None)
+        if subsets and len(subsets) > 0:
+            for s in subsets:
+                idx = cls.FILTERED_SUBSETS_IDX.get(s, None)
+                if idx:
+                    features[idx] = 1
+        return features
+
+    @classmethod
+    def _feature_names(cls) -> list[str]:
+        return [f"IN_{f.replace('#', '_')}" for f in cls.FILTERED_SUBSETS]

@@ -1,0 +1,20 @@
+[
+  {
+    "IN_mondo_disease_grouping": 0,
+    "IN_mondo_gard_rare": 0,
+    "IN_mondo_ordo_etiological_subtype": 0,
+    "IN_mondo_ordo_group_of_disorders": 0
+  },
+  {
+    "IN_mondo_disease_grouping": 0,
+    "IN_mondo_gard_rare": 1,
+    "IN_mondo_ordo_etiological_subtype": 0,
+    "IN_mondo_ordo_group_of_disorders": 0
+  },
+  {
+    "IN_mondo_disease_grouping": 0,
+    "IN_mondo_gard_rare": 1,
+    "IN_mondo_ordo_etiological_subtype": 0,
+    "IN_mondo_ordo_group_of_disorders": 1
+  }
+]
