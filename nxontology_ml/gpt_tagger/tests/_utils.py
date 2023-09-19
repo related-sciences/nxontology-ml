@@ -56,6 +56,7 @@ def mk_stub_ccm(
 def mk_test_gpt_tagger(
     cache_content: dict[str, bytes],
     stub_content: dict[str, Response] | None = None,
+    config: TaskConfig = precision_config,
 ) -> GptTagger:
     """
     Helper to build test GptTagger instances
@@ -63,14 +64,16 @@ def mk_test_gpt_tagger(
     counter: Counter[str] = Counter()
     return GptTagger(
         chat_completion_middleware=mk_stub_ccm(
-            counter=counter, stub_content=stub_content
+            config=config,
+            stub_content=stub_content,
+            counter=counter,
         ),
         cache=_Cache(
             storage=cache_content,
-            key_hash_fn=precision_config.cache_key_hash_fn,
+            key_hash_fn=config.cache_key_hash_fn,
             counter=counter,
         ),
-        batcher=_TiktokenBatcher.from_config(precision_config),
-        config=precision_config,
+        batcher=_TiktokenBatcher.from_config(config),
+        config=config,
         counter=counter,
     )
