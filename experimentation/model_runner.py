@@ -12,6 +12,7 @@ from nxontology_ml.features import (
     PrepareNodeFeatures,
     SubsetsFeatures,
 )
+from nxontology_ml.gpt_tagger import DEFAULT_CONF, GptTagFeatures
 from nxontology_ml.model import CatBoostDataFormatter
 from nxontology_ml.text_embeddings.embeddings_model import AutoModelEmbeddings
 from nxontology_ml.text_embeddings.knn_embeddings_transformer import (
@@ -75,12 +76,25 @@ EXPERIMENTS = [
     #     pca_components=64,
     #     use_knn=True,
     # ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     embedding_enabled=True,
+    #     pca_components=64,
+    #     subsets_enabled=True,
+    # ),
+    ExperimentMetadata(
+        eval_metric="BiasedMaeMetric",
+        # depth=7,
+        gpt_tagger_config=DEFAULT_CONF,
+    ),
     ExperimentMetadata(
         eval_metric="BiasedMaeMetric",
         # depth=7,
         embedding_enabled=True,
         pca_components=64,
         subsets_enabled=True,
+        gpt_tagger_config=DEFAULT_CONF,
     ),
 ]
 
@@ -122,6 +136,7 @@ def run_experiments(
                 NodeInfoFeatures(),
                 NodeXrefFeatures(),
                 SubsetsFeatures(enabled=exp.subsets_enabled),
+                GptTagFeatures.from_config(exp.gpt_tagger_config),
                 TextEmbeddingsTransformer.from_config(
                     enabled=exp.embedding_enabled,
                     pca_components=exp.pca_components,

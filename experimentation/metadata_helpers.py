@@ -23,6 +23,7 @@ from experimentation.model_utils import (
     mean_absolute_error,
     one_h_enc,
 )
+from nxontology_ml.gpt_tagger import TaskConfig
 from nxontology_ml.utils import ROOT_DIR
 
 """
@@ -67,6 +68,7 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
     use_lda: bool = False
     use_knn: bool = False
     subsets_enabled: bool = False
+    gpt_tagger_config: TaskConfig | None = None
     depth: int = 6
     eval_metric: str = "MultiClass"
     base_dir: Path = EXPERIMENT_MODEL_DIR
@@ -86,6 +88,9 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
             parts.append("knn")
         if self.subsets_enabled:
             parts.append("subsets")
+        if self.gpt_tagger_config:
+            # Note: we don't use the config name in the name of the experiment
+            parts.append(self.gpt_tagger_config.openai_model_name.replace("-", ""))
         if self.depth != 6:
             parts.append(f"d{self.depth}")
         if self.eval_metric == "BiasedMaeMetric":
@@ -146,7 +151,9 @@ class ModelMetadataBuilder:
     _version: str = "1.0"  # Semver for the metadata schema
 
     def __init__(self, experiment: ExperimentMetadata) -> None:
-        assert experiment.name.isidentifier()  # Used as a dirname
+        assert (
+            experiment.name.isidentifier()
+        ), f"Invalid experiment name: {experiment.name}"  # Used as a dirname
         self._start_time = datetime.utcnow()
         self._experiment = experiment
 
