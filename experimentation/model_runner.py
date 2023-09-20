@@ -83,11 +83,11 @@ EXPERIMENTS = [
     #     pca_components=64,
     #     subsets_enabled=True,
     # ),
-    ExperimentMetadata(
-        eval_metric="BiasedMaeMetric",
-        # depth=7,
-        gpt_tagger_config=DEFAULT_CONF,
-    ),
+    # ExperimentMetadata(
+    #     eval_metric="BiasedMaeMetric",
+    #     # depth=7,
+    #     gpt_tagger_config=DEFAULT_CONF,
+    # ),
     ExperimentMetadata(
         eval_metric="BiasedMaeMetric",
         # depth=7,

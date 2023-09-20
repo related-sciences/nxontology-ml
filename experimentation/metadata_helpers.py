@@ -1,6 +1,9 @@
 import json
+import re
 import time
+from collections import defaultdict
 from collections.abc import Iterable
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum, auto
 from pathlib import Path
@@ -198,7 +201,6 @@ class ModelMetadataBuilder:
             "get_all_params",
             "get_best_iteration",
             "get_best_score",
-            "get_feature_importance",
             "get_params",
             "tree_count_",
         ]
@@ -208,6 +210,11 @@ class ModelMetadataBuilder:
             if attr.startswith("get_"):
                 a = a()
             model_attrs_val[attr] = a
+        model_attrs_val["feature_importance"] = dict(
+            model.get_feature_importance(prettified=True).to_dict(orient="tight")[
+                "data"
+            ]
+        )
         self._catboost_metadata = model_attrs_val
 
     def metrics_from_model(
@@ -435,3 +442,67 @@ def list_inst_fields(
         if callable(getattr(inst, attr_name)):
             continue
         yield attr_name
+
+
+@dataclass
+class FeatureGroup:
+    name: str
+    pattern: str
+
+
+PCA_FG = FeatureGroup(name="pca_fg", pattern="pca_*")
+GPT_FG = FeatureGroup(name="gpt_tags_fg", pattern="gpt-4_tag_*")
+X_REF_FG = FeatureGroup(name="xref_fg", pattern="xref__*")
+SUBSETS_FG = FeatureGroup(name="subsets_fg", pattern="IN_*")
+N_FG = FeatureGroup(name="n_fg", pattern="n_*")
+
+
+def extract_feature_importance(
+    exp_name: str, feature_groups: list[FeatureGroup] | None = None
+) -> pd.DataFrame:
+    """
+    Extract the feature importance for a given experiment.
+    The importance values are normalized within each fold to sum to 1.
+    The features are optionally grouped.
+    """
+    feature_groups = feature_groups or []
+    p = EXPERIMENT_MODEL_DIR / exp_name
+    assert p.is_dir(), f"Wrong experiment path: {p}"
+
+    out_df = pd.DataFrame()
+    # List folds:
+    for fold_i, fold_dir in enumerate(sorted(p.iterdir())):
+        metadata = ModelMetadata(
+            **json.loads(fold_dir.joinpath(METADATA_FILENAME).read_text())
+        )
+        feature_importance: dict[str, float] = metadata.catboost_metadata[
+            "feature_importance"
+        ]
+        sum_weights = sum(feature_importance.values())
+        grouped_feature_importance: dict[str, float] = defaultdict(float)
+        for fn, w in feature_importance.items():
+            for fg in feature_groups:
+                if re.match(fg.pattern, fn):
+                    fn = fg.name
+                    break
+            grouped_feature_importance[fn] += w / sum_weights
+
+        df = pd.DataFrame(
+            [
+                {
+                    "fold": fold_i,
+                    "feature": f,
+                    "importance": i,
+                }
+                for f, i in grouped_feature_importance.items()
+            ]
+        )
+        out_df = pd.concat([out_df, df])
+
+    # Sort by median importance
+    median_importance = out_df.groupby("feature")["importance"].median().to_dict()
+    out_df = out_df.sort_values(
+        by="feature", key=lambda e: e.apply(median_importance.get), ascending=False
+    )
+
+    return out_df
