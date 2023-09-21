@@ -59,13 +59,15 @@ class NodeLabelOutput:
 
     identifier: str
     precision: str
+    proba_high: float
+    proba_medium: float
+    proba_low: float
     rs_classification: str | None
-    probas: list[float]
+    efo_label: str | None
 
 
 def export_model_predictions(
-    precisions_file: Path = ROOT_DIR / "data/efo_otar_slim_v3.57.0_precisions.tsv",
-    features_file: Path = ROOT_DIR / "data/efo_otar_slim_v3.57.0_features.tsv",
+    export_file: Path = ROOT_DIR / "data/efo_otar_slim_v3.57.0_precisions.tsv",
     take: int | None = None,
     text_embeddings_enabled: bool = True,
 ) -> None:
@@ -74,8 +76,7 @@ def export_model_predictions(
     2. Run inference on the entire EFO graph (except the non-disease nodes)
     3. Export both labels and the feature values for each node
     """
-    assert not precisions_file.exists(), f"{precisions_file} already exists, aborting"
-    assert not features_file.exists(), f"{features_file} already exists, aborting"
+    assert not export_file.exists(), f"{export_file} already exists, aborting"
 
     # 1. Train model
     X, y = read_training_data(filter_out_non_disease=True, take=take)
@@ -107,7 +108,8 @@ def export_model_predictions(
     )
 
     # 2. Do inference on new version of the ontology
-    target_nodes: list[str] = list(get_disease_nodes(take=take))
+    nxo = get_efo_otar_slim()
+    target_nodes: list[str] = list(get_disease_nodes(take=take, nxo=nxo))
     target_features = feature_pipeline.transform(target_nodes)
     target_labels = model.predict(target_features)
     target_probas = model.predict_proba(target_features)
@@ -118,30 +120,38 @@ def export_model_predictions(
         NodeLabelOutput(
             identifier=node_id,
             precision=rs_cls_to_precision[label[0]],
-            probas=probas.tolist(),
+            proba_high=probas[0],
+            proba_medium=probas[1],
+            proba_low=probas[2],
             rs_classification=training_set_labels.get(node_id, None),
+            efo_label=nxo.node_info(node_id).data["efo_label"],
         )
         for node_id, label, probas in zip(
             target_nodes, target_labels, target_probas, strict=True
         )
     ]
 
-    labels_output_df = pd.DataFrame(labels_output)
-    labels_output_df.to_csv(precisions_file, sep="\t", index=False)
-
     features_output_df = pd.DataFrame(
         data=np.hstack(
             [
-                np.array(target_nodes).reshape((len(target_nodes), 1)),
                 target_features.cat_feature_data,
-                target_features.num_feature_data,
+                np.array(target_features.num_feature_data, dtype=float),
             ]
         ),
-        columns=["identifier"]
-        + target_features.cat_feature_names
-        + target_features.num_feature_names,
+        columns=np.array(
+            target_features.cat_feature_names + target_features.num_feature_names
+        ),
     )
-    features_output_df.to_csv(features_file, sep="\t", index=False)
+
+    output_df = pd.concat(
+        [pd.DataFrame(labels_output), features_output_df], axis=1
+    ).convert_dtypes()
+    output_df.to_csv(
+        export_file,
+        sep="\t",
+        index=False,
+        float_format="%.5g",
+    )
 
 
 if __name__ == "__main__":
