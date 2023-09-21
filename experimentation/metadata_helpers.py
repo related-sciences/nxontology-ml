@@ -454,7 +454,7 @@ PCA_FG = FeatureGroup(name="pca_fg", pattern="pca_*")
 GPT_FG = FeatureGroup(name="gpt_tags_fg", pattern="gpt-4_tag_*")
 X_REF_FG = FeatureGroup(name="xref_fg", pattern="xref__*")
 SUBSETS_FG = FeatureGroup(name="subsets_fg", pattern="IN_*")
-N_FG = FeatureGroup(name="n_fg", pattern="n_*")
+TOPO_FG = FeatureGroup(name="topo_fg", pattern="n_*|intrinsic_*|depth")
 
 
 def extract_feature_importance(
