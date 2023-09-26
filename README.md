@@ -7,6 +7,10 @@
 This is a project to classify ontology nodes/classes/terms using machine learning.
 It is currently in the early stages of development and should be considered experimental.
 
+The first classification task implemented by this library is to classify nodes in EFO OTAR Slim as [low/medium/high precision](https://github.com/related-sciences/nxontology-ml/issues/2).
+We presented on this application at the 2023-09-22 [Mondo Outreach Call](https://mondo.monarchinitiative.org/pages/workshop/ "Mondo Disease Ontology Workshops and Outreach Calls")
+([slides](https://slides.com/dhimmel/efo-disease-precision "Classifying EFO/MONDO diseases as low, medium, or high precision using nxontology-ml")).
+
 See [`nxontology`](https://github.com/related-sciences/nxontology) and [`nxontology-data`](https://github.com/related-sciences/nxontology-data) for other (more mature) components of the nxontology ecosystem.
 
 ## Development
