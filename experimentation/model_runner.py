@@ -11,8 +11,9 @@ from nxontology_ml.features import (
     NodeInfoFeatures,
     PrepareNodeFeatures,
     SubsetsFeatures,
+    TherapeuticAreaFeatures,
 )
-from nxontology_ml.gpt_tagger import DEFAULT_CONF, GptTagFeatures
+from nxontology_ml.gpt_tagger import GptTagFeatures
 from nxontology_ml.model import CatBoostDataFormatter
 from nxontology_ml.text_embeddings.embeddings_model import AutoModelEmbeddings
 from nxontology_ml.text_embeddings.knn_embeddings_transformer import (
@@ -90,11 +91,13 @@ EXPERIMENTS = [
     # ),
     ExperimentMetadata(
         eval_metric="BiasedMaeMetric",
-        # depth=7,
+        ta_enabled=True,
+    ),
+    ExperimentMetadata(
+        eval_metric="BiasedMaeMetric",
         embedding_enabled=True,
         pca_components=64,
-        subsets_enabled=True,
-        gpt_tagger_config=DEFAULT_CONF,
+        ta_enabled=True,
     ),
 ]
 
@@ -136,6 +139,7 @@ def run_experiments(
                 NodeInfoFeatures(),
                 NodeXrefFeatures(),
                 SubsetsFeatures(enabled=exp.subsets_enabled),
+                TherapeuticAreaFeatures(enabled=exp.ta_enabled),
                 GptTagFeatures.from_config(exp.gpt_tagger_config),
                 TextEmbeddingsTransformer.from_config(
                     enabled=exp.embedding_enabled,
