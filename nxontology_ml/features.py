@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from nxontology import NXOntology
 from nxontology.node import NodeInfo
 
@@ -87,3 +88,57 @@ class SubsetsFeatures(DataFrameFnTransformer):
     @classmethod
     def _feature_names(cls) -> list[str]:
         return [f"IN_{f.replace('#', '_')}" for f in cls.FILTERED_SUBSETS]
+
+
+class TherapeuticAreaFeatures(DataFrameFnTransformer):
+    """
+    Adds boolean features to encode EFO Therapeutic Areas
+    See:
+     - https://github.com/related-sciences/nxontology-ml/issues/33
+     - https://github.com/related-sciences/nxontology-ml/pull/31#discussion_r1333561764
+    """
+
+    THERAPEUTIC_AREA = {
+        "EFO:0000319": "cardiovascular_disease",
+        "EFO:0000540": "immune_system_disease",
+        "EFO:0000618": "nervous_system_disease",
+        "EFO:0001379": "endocrine_system_disease",
+        "EFO:0005741": "infectious_disease",
+        "EFO:0005803": "hematologic_disease",
+        "EFO:0009690": "urinary_system_disease",
+        "EFO:0010282": "gastrointestinal_disease",
+        "EFO:0010285": "integumentary_system_disease",
+        "MONDO:0002025": "psychiatric_disorder",
+        "MONDO:0021205": "disorder_of_ear",
+        "MONDO:0024458": "disorder_of_visual_system",
+        "MONDO:0045024": "cancer_or_benign_tumor",
+        "OTAR:0000006": "musculoskeletal_or_connective_tissue_disease",
+        "OTAR:0000009": "injury_poisoning_or_other_complication",
+        "OTAR:0000010": "respiratory_or_thoracic_disease",
+        "OTAR:0000014": "pregnancy_or_perinatal_disease",
+        "OTAR:0000017": "reproductive_system_or_breast_disease",
+        "OTAR:0000018": "genetic_familial_or_congenital_disease",
+        "OTAR:0000020": "nutritional_or_metabolic_disease",
+    }
+    THERAPEUTIC_AREA_IDX = {ta: i for i, ta in enumerate(THERAPEUTIC_AREA.keys())}
+
+    def __init__(self, enabled: bool = True) -> None:
+        super().__init__(
+            num_features_fn=self._ta_features,
+            num_features_names=self._feature_names(),
+            num_feature_dtype=pd.SparseDtype("int", 0),
+            enabled=enabled,
+        )
+
+    @classmethod
+    def _ta_features(cls, n: NodeInfo[str]) -> np.array:
+        features = np.zeros(len(cls.THERAPEUTIC_AREA), dtype=np.uint8)
+        for r in n.roots:
+            idx = cls.THERAPEUTIC_AREA_IDX.get(r, None)
+            if idx:
+                features[idx] = 1
+        return features
+
+    @classmethod
+    def _feature_names(cls) -> list[str]:
+        return [f"TA_{ta_name}" for ta_name in cls.THERAPEUTIC_AREA.values()]

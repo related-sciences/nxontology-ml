@@ -6,6 +6,7 @@ from typing import Any, Generic, TypeVar
 import numpy as np
 import pandas as pd
 from nxontology.node import NodeInfo
+from pandas.core.dtypes.base import ExtensionDtype
 from sklearn.base import TransformerMixin
 
 
@@ -55,12 +56,14 @@ class DataFrameFnTransformer(NoFitTransformer[NodeFeatures, NodeFeatures]):
         self,
         num_features_fn: Callable[[NodeInfo[str]], np.array] | None = None,
         num_features_names: list[str] | None = None,
+        num_feature_dtype: ExtensionDtype | None = None,
         cat_features_fn: Callable[[NodeInfo[str]], np.array] | None = None,
         cat_features_names: list[str] | None = None,
         enabled: bool = True,
     ):
         self._num_features_fn = num_features_fn
         self._num_features_names = num_features_names
+        self._num_feature_dtype = num_feature_dtype
         self._cat_features_fn = cat_features_fn
         self._cat_features_names = cat_features_names
         self._enabled = enabled
@@ -73,6 +76,7 @@ class DataFrameFnTransformer(NoFitTransformer[NodeFeatures, NodeFeatures]):
             new_features = pd.DataFrame(
                 data=[self._num_features_fn(node) for node in X.nodes],
                 columns=self._num_features_names,
+                dtype=self._num_feature_dtype,
             )
             X.num_features = pd.concat([X.num_features, new_features], axis=1)
         if self._cat_features_fn:
