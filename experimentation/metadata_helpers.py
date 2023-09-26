@@ -71,13 +71,14 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
     use_lda: bool = False
     use_knn: bool = False
     subsets_enabled: bool = False
+    ta_enabled: bool = False
     gpt_tagger_config: TaskConfig | None = None
     depth: int = 6
     eval_metric: str = "MultiClass"
     base_dir: Path = EXPERIMENT_MODEL_DIR
 
     @property
-    def name(self) -> str:
+    def name(self) -> str:  # noqa: C901
         if self.name_override:
             return self.name_override
         parts: list[str] = []
@@ -91,6 +92,8 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
             parts.append("knn")
         if self.subsets_enabled:
             parts.append("subsets")
+        if self.ta_enabled:
+            parts.append("ta")
         if self.gpt_tagger_config:
             # Note: we don't use the config name in the name of the experiment
             parts.append(self.gpt_tagger_config.openai_model_name.replace("-", ""))
