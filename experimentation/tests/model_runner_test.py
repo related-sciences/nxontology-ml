@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from experimentation.metadata_helpers import ExperimentMetadata
+from experimentation.metadata_helpers import ModelConfig
 from experimentation.model_runner import run_experiments
 from nxontology_ml.text_embeddings.embeddings_model import (
     DEFAULT_EMBEDDING_MODEL,
@@ -11,7 +11,7 @@ from nxontology_ml.text_embeddings.embeddings_model import (
 def test_run_experiments(tmp_path: Path) -> None:
     ame = AutoModelEmbeddings.from_pretrained(DEFAULT_EMBEDDING_MODEL)
     experiments = [
-        ExperimentMetadata(
+        ModelConfig(
             eval_metric="BiasedMaeMetric",
             base_dir=tmp_path,
         )

@@ -4,7 +4,7 @@ from catboost import CatBoostClassifier, Pool
 from sklearn.pipeline import make_pipeline
 from transformers import Pipeline
 
-from experimentation.metadata_helpers import ExperimentMetadata, ModelMetadataBuilder
+from experimentation.metadata_helpers import ModelMetadataBuilder
 from nxontology_ml.data import read_training_data
 from nxontology_ml.efo import NodeXrefFeatures
 from nxontology_ml.features import (
@@ -14,83 +14,84 @@ from nxontology_ml.features import (
     TherapeuticAreaFeatures,
 )
 from nxontology_ml.gpt_tagger import GptTagFeatures
-from nxontology_ml.model import MODEL_SEED, CatBoostDataFormatter
+from nxontology_ml.model.config import ModelConfig
+from nxontology_ml.model.formatter import MODEL_SEED, CatBoostDataFormatter
 from nxontology_ml.text_embeddings.embeddings_model import AutoModelEmbeddings
 from nxontology_ml.text_embeddings.text_embeddings_transformer import (
     TextEmbeddingsTransformer,
 )
 
 EXPERIMENTS = [
-    # ExperimentMetadata(
+    # ModelConfig(
     #     name_override="baseline",
     #     eval_metric="MultiClass",
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     use_knn=True,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     use_lda=True,
     #     embedding_enabled=True,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     embedding_enabled=True,
     #     pca_components=32,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     embedding_enabled=True,
     #     pca_components=64,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     embedding_enabled=True,
     #     pca_components=128,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     embedding_enabled=True,
     #     pca_components=256,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     embedding_enabled=True,
     #     pca_components=64,
     #     use_knn=True,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     embedding_enabled=True,
     #     pca_components=64,
     #     subsets_enabled=True,
     # ),
-    # ExperimentMetadata(
+    # ModelConfig(
     #     eval_metric="BiasedMaeMetric",
     #     # depth=7,
     #     gpt_tagger_config=DEFAULT_CONF,
     # ),
-    ExperimentMetadata(
+    ModelConfig(
         eval_metric="BiasedMaeMetric",
         ta_enabled=True,
     ),
-    ExperimentMetadata(
+    ModelConfig(
         eval_metric="BiasedMaeMetric",
         embedding_enabled=True,
         pca_components=64,
@@ -100,7 +101,7 @@ EXPERIMENTS = [
 
 
 def run_experiments(
-    experiments: list[ExperimentMetadata] | None = None,
+    experiments: list[ModelConfig] | None = None,
     ame: AutoModelEmbeddings | None = None,
     n_splits: int = 25,
     take: int | None = None,

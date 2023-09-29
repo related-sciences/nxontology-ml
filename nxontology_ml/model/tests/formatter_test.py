@@ -5,7 +5,7 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from nxontology_ml.data import read_training_data
 from nxontology_ml.efo import NodeXrefFeatures
 from nxontology_ml.features import NodeInfoFeatures, PrepareNodeFeatures
-from nxontology_ml.model import MODEL_SEED, CatBoostDataFormatter
+from nxontology_ml.model.formatter import MODEL_SEED, CatBoostDataFormatter
 
 
 def test_e2e_model() -> None:
