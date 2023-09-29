@@ -13,6 +13,18 @@ We presented on this application at the 2023-09-22 [Mondo Outreach Call](https:/
 
 See [`nxontology`](https://github.com/related-sciences/nxontology) and [`nxontology-data`](https://github.com/related-sciences/nxontology-data) for other (more mature) components of the nxontology ecosystem.
 
+To use the model to label an EFO ontology:
+
+```python
+from nxontology_ml.data import get_efo_otar_slim
+from nxontology_ml.model.predict import train_predict
+
+nxo = get_efo_otar_slim()
+df = train_predict(nxo=nxo)
+```
+Note: The model can be trained with a different configuration using `train_predict(conf=ModelConfig(...))`
+
+
 ## Development
 
 ```shell

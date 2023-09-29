@@ -27,10 +27,9 @@ def train_model(
     take: int | None = 0,
 ) -> tuple[Pipeline, CatBoostClassifier]:
     nxo = nxo or get_efo_otar_slim()
-    if training_set:
-        X, y = training_set
-    else:
-        X, y = read_training_data(filter_out_non_disease=True, nxo=nxo, take=take)
+    (X, y) = training_set or read_training_data(
+        filter_out_non_disease=True, nxo=nxo, take=take
+    )
 
     feature_pipeline: Pipeline = make_pipeline(
         PrepareNodeFeatures(nxo=nxo),
