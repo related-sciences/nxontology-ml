@@ -42,7 +42,6 @@ torch = [
     # Use different src for linux, see: https://pytorch.org/get-started/locally/
     { version = "^2.0.1", markers = "sys_platform == 'linux'", source = "pytorch-cpu-src" },
 ]
-faiss-cpu = "^1.7.4"
 
 [[tool.poetry.source]]
 name = "pytorch-cpu-src"
