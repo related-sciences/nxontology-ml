@@ -13,7 +13,7 @@ from experimentation.model_utils import BiasedMaeMetric
 from nxontology_ml.data import get_efo_otar_slim, read_training_data
 from nxontology_ml.efo import NodeXrefFeatures
 from nxontology_ml.features import NodeInfoFeatures, PrepareNodeFeatures
-from nxontology_ml.model import CatBoostDataFormatter
+from nxontology_ml.model import MODEL_SEED, CatBoostDataFormatter
 from nxontology_ml.text_embeddings.text_embeddings_transformer import (
     TextEmbeddingsTransformer,
 )
@@ -99,6 +99,7 @@ def export_model_predictions(
         learning_rate=0.5,
         iterations=5000,
         metric_period=250,
+        random_seed=MODEL_SEED,
     )
     model.fit(
         X=Pool(
