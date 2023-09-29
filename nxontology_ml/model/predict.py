@@ -98,6 +98,22 @@ def train_predict(
     train_take: int | None = 0,
     predict_take: int | None = 0,
 ) -> pd.DataFrame:
+    """
+    Run both model training and prediction tasks.
+
+    Notes:
+    - The training part runs on the subset of the nodes that have been manually labeled
+    - The prediction part runs on all the nodes of the ontology
+
+    :param conf: Configuration for the model.
+    :param nxo: Target ontology graph. Defaults to the latest version of the ontology.
+    :param training_set: Tuple[X, Y] where X are the features and Y are the labels. Defaults to the standard set of
+    features.
+    :param include_feature_values: Whether to include the features in the output.
+    :param train_take: Use a subset of the nodes for training.
+    :param predict_take: Use a subset of the nodes for prediction.
+    :return: Pandas DataFrame containing the labelled data (and features, by default)
+    """
     training_set = training_set or read_training_data(
         filter_out_non_disease=True, nxo=nxo, take=train_take
     )
