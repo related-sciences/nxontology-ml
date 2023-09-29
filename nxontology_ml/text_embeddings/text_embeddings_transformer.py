@@ -12,6 +12,9 @@ from nxontology_ml.text_embeddings.embeddings_model import (
     AutoModelEmbeddings,
 )
 
+# Set global random seed for  reproducibility
+np.random.seed(seed=42)
+
 
 class TextEmbeddingsTransformer(TransformerMixin):  # type: ignore[misc]
     """
