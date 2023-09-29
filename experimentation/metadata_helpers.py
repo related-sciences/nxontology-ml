@@ -69,7 +69,7 @@ class ExperimentMetadata(BaseModel):  # type: ignore[misc]
     embedding_enabled: bool = False
     pca_components: int | None = None
     use_lda: bool = False
-    use_knn: bool = False
+    use_knn: bool = False  # This feature was removed
     subsets_enabled: bool = False
     ta_enabled: bool = False
     gpt_tagger_config: TaskConfig | None = None

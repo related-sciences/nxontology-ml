@@ -16,9 +16,6 @@ from nxontology_ml.features import (
 from nxontology_ml.gpt_tagger import GptTagFeatures
 from nxontology_ml.model import CatBoostDataFormatter
 from nxontology_ml.text_embeddings.embeddings_model import AutoModelEmbeddings
-from nxontology_ml.text_embeddings.knn_embeddings_transformer import (
-    KnnEmbeddingsTransformer,
-)
 from nxontology_ml.text_embeddings.text_embeddings_transformer import (
     TextEmbeddingsTransformer,
 )
@@ -145,10 +142,6 @@ def run_experiments(
                     enabled=exp.embedding_enabled,
                     pca_components=exp.pca_components,
                     use_lda=exp.use_lda,
-                    embedding_model=ame,
-                ),
-                KnnEmbeddingsTransformer.from_config(
-                    enabled=exp.use_knn,
                     embedding_model=ame,
                 ),
                 CatBoostDataFormatter(),
