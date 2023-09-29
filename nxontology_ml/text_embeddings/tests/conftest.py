@@ -1,14 +1,10 @@
 from pathlib import Path
 
-import numpy as np
 import pytest
 from nxontology import NXOntology
 
 from nxontology_ml.data import get_efo_otar_slim
 from nxontology_ml.tests.utils import get_test_resource_path
-
-# Set global random seed for test reproducibility
-np.random.seed(seed=42)
 
 
 @pytest.fixture
