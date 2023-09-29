@@ -3,7 +3,7 @@ import re
 import pytest
 
 from experimentation.metadata_helpers import (
-    ExperimentMetadata,
+    ModelConfig,
     ModelMetadataBuilder,
     df_from_all_experiments,
 )
@@ -16,7 +16,7 @@ def test_df_from_all_experiments() -> None:
 
 
 def test_experiment_name() -> None:
-    experiment = ExperimentMetadata(
+    experiment = ModelConfig(
         eval_metric="BiasedMaeMetric",
         depth=7,
         embedding_enabled=True,
@@ -26,13 +26,13 @@ def test_experiment_name() -> None:
     )
     assert experiment.name == "pca64_lda_knn_d7_mae"
 
-    experiment = ExperimentMetadata(
+    experiment = ModelConfig(
         eval_metric="BiasedMaeMetric",
         embedding_enabled=True,
     )
     assert experiment.name == "full_embedding_mae"
 
-    experiment = ExperimentMetadata(
+    experiment = ModelConfig(
         name_override="test_name_override",
         description_override="test_description_override",
     )
@@ -42,7 +42,7 @@ def test_experiment_name() -> None:
 
 
 def test_experiment_already_exists() -> None:
-    experiment = ExperimentMetadata(
+    experiment = ModelConfig(
         eval_metric="BiasedMaeMetric",
         base_dir=get_test_resource_path(""),
     )
