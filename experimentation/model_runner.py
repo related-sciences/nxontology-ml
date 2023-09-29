@@ -14,7 +14,7 @@ from nxontology_ml.features import (
     TherapeuticAreaFeatures,
 )
 from nxontology_ml.gpt_tagger import GptTagFeatures
-from nxontology_ml.model import CatBoostDataFormatter
+from nxontology_ml.model import MODEL_SEED, CatBoostDataFormatter
 from nxontology_ml.text_embeddings.embeddings_model import AutoModelEmbeddings
 from nxontology_ml.text_embeddings.text_embeddings_transformer import (
     TextEmbeddingsTransformer,
@@ -167,6 +167,7 @@ def run_experiments(
                 iterations=5000,
                 use_best_model=True,
                 metric_period=250,
+                random_seed=MODEL_SEED,
                 # early_stopping_rounds=1000,
                 # task_type="GPU",
                 # l2_leaf_reg=.01,
