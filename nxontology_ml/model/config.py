@@ -30,6 +30,7 @@ class ModelConfig(BaseModel):  # type: ignore[misc]
     ta_enabled: bool = False
     gpt_tagger_config: TaskConfig | None = None
     depth: int = 6
+    iterations: int = 5000
     eval_metric: str = "MultiClass"
     base_dir: Path = EXPERIMENT_MODEL_DIR
 
@@ -53,6 +54,8 @@ class ModelConfig(BaseModel):  # type: ignore[misc]
         if self.gpt_tagger_config:
             # Note: we don't use the config name in the name of the experiment
             parts.append(self.gpt_tagger_config.openai_model_name.replace("-", ""))
+        if self.iterations != 5000:
+            parts.append(f"it{self.iterations}")
         if self.depth != 6:
             parts.append(f"d{self.depth}")
         if self.eval_metric == "BiasedMaeMetric":
@@ -70,3 +73,11 @@ class ModelConfig(BaseModel):  # type: ignore[misc]
         if self.eval_metric == "BiasedMaeMetric":
             return BiasedMaeMetric()
         return self.eval_metric
+
+
+DEFAULT_MODEL_CONFIG = ModelConfig(
+    eval_metric="BiasedMaeMetric",
+    embedding_enabled=True,
+    pca_components=64,
+    ta_enabled=True,
+)
