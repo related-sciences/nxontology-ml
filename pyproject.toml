@@ -10,6 +10,7 @@ authors = ["Related Sciences Data Team"]
 readme = "README.md"
 repository = "https://github.com/related-sciences/nxontology-ml"
 license = "Apache-2.0"
+include = ["data/efo_otar_slim_v3.43.0_rs_classification.tsv"]
 
 [tool.poetry.scripts]
 nxontology_ml = "nxontology_ml.commands:cli"
