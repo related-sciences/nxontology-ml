@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.base import TransformerMixin
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from tqdm import tqdm
 
 from nxontology_ml.sklearn_transformer import (
     NodeFeatures,
@@ -77,7 +78,15 @@ class TextEmbeddingsTransformer(TransformerMixin):  # type: ignore[misc]
         return X
 
     def _nodes_to_vec(self, X: NodeFeatures) -> np.ndarray:
-        return np.array([self._embedding_model.embed_node(node) for node in X.nodes])
+        embedded_nodes: list[np.array] = []
+        for node in tqdm(
+            X.nodes,
+            desc="Fetching node embeddings",
+            delay=5,
+        ):
+            embedded_nodes.append(self._embedding_model.embed_node(node))
+
+        return np.array(embedded_nodes)
 
     @classmethod
     def from_config(
