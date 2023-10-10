@@ -52,6 +52,7 @@ def predict(
     take: int | None = 0,
 ) -> pd.DataFrame:
     target_nodes: list[str] = list(get_disease_nodes(take=take, nxo=nxo))
+    assert len(target_nodes) > 0, "No disease node found"
     target_features = feature_pipeline.transform(target_nodes)
     target_labels = model.predict(target_features)
     target_probas = model.predict_proba(target_features)

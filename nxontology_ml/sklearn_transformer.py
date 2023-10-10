@@ -8,6 +8,7 @@ import pandas as pd
 from nxontology.node import NodeInfo
 from pandas.core.dtypes.base import ExtensionDtype
 from sklearn.base import TransformerMixin
+from tqdm import tqdm
 
 
 @dataclass
@@ -73,16 +74,32 @@ class DataFrameFnTransformer(NoFitTransformer[NodeFeatures, NodeFeatures]):
             return X
         if self._num_features_fn:
             assert self._num_features_names
+
+            vecs: list[np.array] = []
+            for node in tqdm(
+                X.nodes,
+                desc=f"{self.__class__.__name__}: Computing num features",
+                delay=5,
+            ):
+                vecs.append(self._num_features_fn(node))
+
             new_features = pd.DataFrame(
-                data=[self._num_features_fn(node) for node in X.nodes],
+                data=vecs,
                 columns=self._num_features_names,
                 dtype=self._num_feature_dtype,
             )
             X.num_features = pd.concat([X.num_features, new_features], axis=1)
         if self._cat_features_fn:
             assert self._cat_features_names
+            cat_vecs: list[np.array] = []
+            for node in tqdm(
+                X.nodes,
+                desc=f"{self.__class__.__name__}: Computing cat features",
+                delay=5,
+            ):
+                cat_vecs.append(self._cat_features_fn(node))
             new_features = pd.DataFrame(
-                data=[self._cat_features_fn(node) for node in X.nodes],
+                data=cat_vecs,
                 columns=self._cat_features_names,
             )
             X.cat_features = pd.concat([X.cat_features, new_features], axis=1)
