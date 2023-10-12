@@ -100,6 +100,7 @@ class LazyLSM(MutableMapping[str, bytes], AbstractContextManager[Any]):
 
     def __open_db(self) -> None:
         if not self._lsm:
+            Path(self._filename).parent.mkdir(parents=True, exist_ok=True)
             self._lsm = LSM(filename=self._filename, **self._lsm_kwargs)
 
     def __setitem__(self, __k: str, __v: bytes) -> None:
