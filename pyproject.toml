@@ -17,17 +17,17 @@ nxontology_ml = "nxontology_ml.commands:cli"
 
 # https://python-poetry.org/docs/versions/
 [tool.poetry.dependencies]
-bioregistry = "^0.8.3"
-fire = "^0.5.0"
-ipykernel = "^6.24.0"
-jupyter = "^1.0.0"
-nbconvert = "^6.2.0"
-notebook = "^6.4.4"
+bioregistry = "^0.10"
+fire = "^0.5"
+ipykernel = "^6.24"
+jupyter = "^1.0"
+nbconvert = "^6.2"
+notebook = "^6.4"
 numpy = "^1.25.1"
 # nxontology = "^0.5.0"
 nxontology = { git = "https://github.com/related-sciences/nxontology.git", rev = "b68411dd7427e303c5f5e389a90185976127c78b" }
-oaklib = "^0.5.12"
-pandas = "^2.0.3"
+oaklib = "^0.5"
+pandas = "^2.0"
 python = "^3.10"
 pytest-cov = "^4.1.0"
 openai = "^0.27.8"
@@ -50,7 +50,7 @@ url = "https://download.pytorch.org/whl/cpu"
 priority = "explicit"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.3.3"
+pre-commit = "^3.3"
 black = { extras = ["jupyter"], version = "^23.7.0" }
 pytest = "^7.4.0"
 ruff = "^0.0.286"
