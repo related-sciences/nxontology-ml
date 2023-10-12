@@ -27,6 +27,7 @@ def train_model(
     take: int | None = 0,
 ) -> tuple[Pipeline, CatBoostClassifier]:
     nxo = nxo or get_efo_otar_slim()
+    nxo.freeze()
     (X, y) = training_set or read_training_data(
         filter_out_non_disease=True, nxo=nxo, take=take
     )
