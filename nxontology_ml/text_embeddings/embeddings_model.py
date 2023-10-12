@@ -1,3 +1,4 @@
+import logging
 import pickle
 import re
 from collections import Counter
@@ -117,11 +118,11 @@ class AutoModelEmbeddings:
         Note: pretrained_model_name should be an encoder only model (e.g. BERT)
         """
         # FIXME: should we add truncation of input??
+        cache_filename = (cache_path or _cache_path(pretrained_model_name)).as_posix()
+        logging.debug(f"Caching embeddings into: {cache_filename}")
         return cls(
             lazy_model=lazy_model or _LazyAutoModel(pretrained_model_name),
             pooler_attr=_model_poolers[pretrained_model_name],
-            cache=LazyLSM(
-                filename=(cache_path or _cache_path(pretrained_model_name)).as_posix()
-            ),
+            cache=LazyLSM(filename=cache_filename),
             counter=counter or Counter(),
         )
