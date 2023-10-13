@@ -49,7 +49,7 @@ def predict(
     training_set: tuple[np.ndarray, np.ndarray],
     nxo: NXOntology[str],
     include_feature_values: bool = True,
-    take: int | None = 0,
+    take: int | None = None,
 ) -> pd.DataFrame:
     target_nodes: list[str] = list(get_disease_nodes(take=take, nxo=nxo))
     assert len(target_nodes) > 0, "No disease node found"
@@ -96,8 +96,8 @@ def train_predict(
     nxo: NXOntology[str] | None = None,
     training_set: tuple[np.ndarray, np.ndarray] | None = None,
     include_feature_values: bool = True,
-    train_take: int | None = 0,
-    predict_take: int | None = 0,
+    train_take: int | None = None,
+    predict_take: int | None = None,
 ) -> pd.DataFrame:
     """
     Run both model training and prediction tasks.
