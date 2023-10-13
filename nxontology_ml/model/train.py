@@ -24,7 +24,7 @@ def train_model(
     conf: ModelConfig = DEFAULT_MODEL_CONFIG,
     nxo: NXOntology[str] | None = None,
     training_set: tuple[np.ndarray, np.ndarray] | None = None,
-    take: int | None = 0,
+    take: int | None = None,
 ) -> tuple[Pipeline, CatBoostClassifier]:
     nxo = nxo or get_efo_otar_slim()
     nxo.freeze()
