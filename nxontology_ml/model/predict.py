@@ -17,6 +17,7 @@ NON_DISEASE_THERAPEUTIC_AREAS: set[str] = {
     "EFO:0000651",  # phenotype
     "GO:0008150",  # biological_process
     "EFO:0002571",  # medical_procedure
+    "OTAR:0000009",  # injury, poisoning or other complication
 }
 
 
