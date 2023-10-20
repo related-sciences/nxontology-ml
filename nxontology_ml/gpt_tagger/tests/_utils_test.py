@@ -1,5 +1,6 @@
 from textwrap import dedent
 
+from nxontology_ml.gpt_tagger import TaskConfig
 from nxontology_ml.gpt_tagger._utils import (
     config_to_cache_namespace,
     efo_id_from_yaml,
@@ -7,15 +8,14 @@ from nxontology_ml.gpt_tagger._utils import (
     node_to_str_fn,
     parse_model_output,
 )
-from nxontology_ml.gpt_tagger.tests._utils import precision_config
 from nxontology_ml.tests.utils import get_test_nodes
 
 
-def test_config_to_cache_namespace() -> None:
+def test_config_to_cache_namespace(precision_config: TaskConfig) -> None:
     assert config_to_cache_namespace(precision_config) == "precision_v1_n1"
 
 
-def test_node_to_str_fn() -> None:
+def test_node_to_str_fn(precision_config: TaskConfig) -> None:
     test_nodes = get_test_nodes()
     fn = node_to_str_fn(precision_config)
     expected_str = """\
@@ -47,7 +47,7 @@ def test_node_efo_id() -> None:
     assert node_efo_id(node) == "DOID:0050890"
 
 
-def test_efo_id_from_yaml() -> None:
+def test_efo_id_from_yaml(precision_config: TaskConfig) -> None:
     node = next(iter(get_test_nodes()))
     fn = node_to_str_fn(precision_config)
     assert efo_id_from_yaml(fn(node)) == "DOID:0050890"

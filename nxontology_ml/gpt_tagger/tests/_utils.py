@@ -10,17 +10,7 @@ from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import TaskConfig
 from nxontology_ml.gpt_tagger._openai_models import Response
 from nxontology_ml.gpt_tagger._tiktoken_batcher import _TiktokenBatcher
-from nxontology_ml.tests.utils import get_test_resource_path, read_test_resource
-
-precision_config = TaskConfig(
-    name="precision",
-    prompt_path=get_test_resource_path("precision_v1.txt"),
-    node_attributes=["efo_id", "efo_label", "efo_definition"],
-    openai_model_name="gpt-3.5-turbo",
-    model_temperature=0,
-    allowed_labels=frozenset({"low", "medium", "high"}),
-    logs_path=None,  # Don't log during tests (unless integration)
-)
+from nxontology_ml.tests.utils import read_test_resource
 
 
 def sanitize_json_format(s: str | dict[str, Any]) -> str:
@@ -32,12 +22,10 @@ def sanitize_json_format(s: str | dict[str, Any]) -> str:
 
 
 def mk_stub_ccm(
-    config: TaskConfig | None = None,
+    config: TaskConfig,
     stub_content: dict[str, Response] | None = None,
     counter: Counter[str] | None = None,
 ) -> _ChatCompletionMiddleware:
-    if not config:
-        config = precision_config
     if not stub_content:
         stub_payload_json = read_test_resource("precision_payload.json")
         stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore
@@ -54,9 +42,9 @@ def mk_stub_ccm(
 
 
 def mk_test_gpt_tagger(
+    config: TaskConfig,
     cache_content: dict[str, bytes],
     stub_content: dict[str, Response] | None = None,
-    config: TaskConfig = precision_config,
 ) -> GptTagger:
     """
     Helper to build test GptTagger instances

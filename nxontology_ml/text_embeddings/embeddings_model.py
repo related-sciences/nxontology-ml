@@ -18,16 +18,15 @@ from transformers import (
 from transformers.modeling_outputs import ModelOutput
 
 from nxontology_ml.gpt_tagger._cache import LazyLSM
-from nxontology_ml.utils import ROOT_DIR
 
 DEFAULT_EMBEDDING_MODEL = "michiyasunaga/BioLinkBERT-base"
 EMBEDDING_SIZES: dict[str, int] = {DEFAULT_EMBEDDING_MODEL: 768}
 _model_poolers: dict[str, str] = {DEFAULT_EMBEDDING_MODEL: "pooler_output"}
 
 
-def _cache_path(pretrained_model_name: str) -> Path:
+def _cache_filename(pretrained_model_name: str) -> str:
     safe_prefix = re.sub("[^0-9a-zA-Z]+", "_", pretrained_model_name)
-    return ROOT_DIR / f".cache/{safe_prefix}.ldb"
+    return f"{safe_prefix}.ldb"
 
 
 class _LazyAutoModel:
@@ -110,7 +109,7 @@ class AutoModelEmbeddings:
     def from_pretrained(
         cls,
         pretrained_model_name: str,
-        cache_path: Path | None = None,
+        cache_dir: Path,
         lazy_model: _LazyAutoModel | None = None,
         counter: Counter[str] | None = None,
     ) -> "AutoModelEmbeddings":
@@ -118,11 +117,12 @@ class AutoModelEmbeddings:
         Note: pretrained_model_name should be an encoder only model (e.g. BERT)
         """
         # FIXME: should we add truncation of input??
-        cache_filename = (cache_path or _cache_path(pretrained_model_name)).as_posix()
-        logging.info(f"Caching embeddings into: {cache_filename}")
+
+        cache_file = cache_dir / _cache_filename(pretrained_model_name)
+        logging.info(f"Caching embeddings into: {cache_file}")
         return cls(
             lazy_model=lazy_model or _LazyAutoModel(pretrained_model_name),
             pooler_attr=_model_poolers[pretrained_model_name],
-            cache=LazyLSM(filename=cache_filename),
+            cache=LazyLSM(filename=cache_file.as_posix()),
             counter=counter or Counter(),
         )

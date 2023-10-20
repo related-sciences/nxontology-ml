@@ -8,9 +8,9 @@ from nxontology_ml.tests.utils import get_test_resource_path
 
 
 @pytest.fixture
-def embeddings_test_cache() -> Path:
+def embeddings_cache_dir() -> Path:
     # We don't want to fetch embeddings over the internet during unit tests
-    return get_test_resource_path("embeddings_cache.ldb")
+    return get_test_resource_path("")
 
 
 @pytest.fixture

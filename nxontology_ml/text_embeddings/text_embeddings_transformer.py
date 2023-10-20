@@ -8,6 +8,7 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from tqdm import tqdm
 
+from nxontology_ml.model.config import ModelConfig
 from nxontology_ml.sklearn_transformer import (
     NodeFeatures,
 )
@@ -99,18 +100,17 @@ class TextEmbeddingsTransformer(TransformerMixin):  # type: ignore[misc]
     @classmethod
     def from_config(
         cls,
-        enabled: bool = True,
-        use_lda: bool = True,
-        pca_components: int | None = None,
+        conf: ModelConfig,
         pretrained_model_name: str = DEFAULT_EMBEDDING_MODEL,
         embedding_model: AutoModelEmbeddings | None = None,
     ) -> "TextEmbeddingsTransformer":
         return cls(
-            enabled=enabled,
-            lda=LDA() if use_lda else None,
-            pca=PCA(n_components=pca_components) if pca_components else None,
+            enabled=conf.embedding_enabled,
+            lda=LDA() if conf.use_lda else None,
+            pca=PCA(n_components=conf.pca_components) if conf.pca_components else None,
             embedding_model=embedding_model
             or AutoModelEmbeddings.from_pretrained(
-                pretrained_model_name=pretrained_model_name
+                pretrained_model_name=pretrained_model_name,
+                cache_dir=conf.cache_dir,
             ),
         )

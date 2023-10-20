@@ -9,15 +9,15 @@ import pytest
 
 from nxontology_ml.data import get_efo_otar_slim
 from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
-from nxontology_ml.gpt_tagger._models import LabelledNode
+from nxontology_ml.gpt_tagger._models import LabelledNode, TaskConfig
 from nxontology_ml.gpt_tagger._openai_models import Response
-from nxontology_ml.gpt_tagger.tests._utils import mk_test_gpt_tagger, precision_config
+from nxontology_ml.gpt_tagger.tests._utils import mk_test_gpt_tagger
 from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
 
 
-def test_fetch_labels() -> None:
+def test_fetch_labels(precision_config: TaskConfig) -> None:
     cache_content: dict[str, bytes] = {}
-    tagger = mk_test_gpt_tagger(cache_content)
+    tagger = mk_test_gpt_tagger(precision_config, cache_content)
     labels = tagger.fetch_labels(get_test_nodes())
     assert list(labels) == [
         LabelledNode(node_efo_id="DOID:0050890", labels=["medium"]),
@@ -41,13 +41,13 @@ def test_fetch_labels() -> None:
     }
 
 
-def test_fetch_labels_cached() -> None:
+def test_fetch_labels_cached(precision_config: TaskConfig) -> None:
     # Pre-loaded cache
     cache_content = {
         "/7665404d4f2728a09ed26b8ebf2b3be612bd7da2": b'["medium"]',
         "/962b25d69f79f600f23a17e2c3fe79948013b4de": b'["medium"]',
     }
-    tagger = mk_test_gpt_tagger(cache_content)
+    tagger = mk_test_gpt_tagger(precision_config, cache_content)
     labels = tagger.fetch_labels(get_test_nodes())
     assert list(labels) == [
         LabelledNode(node_efo_id="DOID:0050890", labels=["medium"]),
@@ -56,13 +56,13 @@ def test_fetch_labels_cached() -> None:
     assert tagger.get_metrics() == Counter({"Cache/get": 2, "Cache/hits": 2})
 
 
-def test_fetch_many_records() -> None:
+def test_fetch_many_records(precision_config: TaskConfig) -> None:
     # Disable caching
     class PassthroughDict(dict[str, bytes]):
         def __setitem__(self, key: str, value: bytes) -> None:
             return
 
-    tagger = mk_test_gpt_tagger(cache_content=PassthroughDict())
+    tagger = mk_test_gpt_tagger(precision_config, cache_content=PassthroughDict())
 
     def _r(n: int) -> Response:
         r = json.loads(read_test_resource("precision_resp.json"))
@@ -92,8 +92,8 @@ def test_fetch_many_records() -> None:
     )
 
 
-def test_get_metrics() -> None:
-    tagger = mk_test_gpt_tagger(cache_content={})
+def test_get_metrics(precision_config: TaskConfig) -> None:
+    tagger = mk_test_gpt_tagger(precision_config, cache_content={})
     tagger._counter["test"] += 42
 
     # Defensive copy: No effect
@@ -107,7 +107,7 @@ def test_get_metrics() -> None:
     assert tagger.get_metrics() == Counter({"test": 43})
 
 
-def test_from_config() -> None:
+def test_from_config(precision_config: TaskConfig) -> None:
     counter: Counter[str] = Counter()
     tagger = GptTagger.from_config(precision_config, counter=counter)
 
@@ -118,13 +118,15 @@ def test_from_config() -> None:
     assert id(tagger._cache._counter) == counter_id
 
 
-def test_resp_truncated() -> None:
+def test_resp_truncated(precision_config: TaskConfig) -> None:
     stub_resp = Response(**json.loads(read_test_resource("precision_resp.json")))  # type: ignore[misc]
     assert stub_resp["choices"][0]["finish_reason"] == "stop"
     stub_resp["choices"][0]["finish_reason"] = "length"  # Simulate resp truncation
     expected_req = read_test_resource("precision_payload.json")
     tagger = mk_test_gpt_tagger(
-        stub_content={expected_req: stub_resp}, cache_content={}
+        config=precision_config,
+        stub_content={expected_req: stub_resp},
+        cache_content={},
     )
     with pytest.raises(
         ValueError,
@@ -142,11 +144,13 @@ def _assert_user_warning_starts_with(warn: WarningMessage, s: str) -> None:
     assert warn_msg.startswith(s)
 
 
-def test_resp_id_mismatch() -> None:
+def test_resp_id_mismatch(precision_config: TaskConfig) -> None:
     expected_req = read_test_resource("mismatch_payload.json")
     stub_resp = Response(**json.loads(read_test_resource("mismatch_resp.json")))  # type: ignore[misc]
     tagger = mk_test_gpt_tagger(
-        stub_content={expected_req: stub_resp}, cache_content={}
+        config=precision_config,
+        stub_content={expected_req: stub_resp},
+        cache_content={},
     )
     nxo = get_efo_otar_slim()
     valid_resp_node = "DOID:0050890"
