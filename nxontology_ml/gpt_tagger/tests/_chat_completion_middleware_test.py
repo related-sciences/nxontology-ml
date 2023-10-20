@@ -8,6 +8,7 @@ from unittest.mock import Mock
 import pytest
 from _pytest._py.path import LocalPath
 
+from nxontology_ml.gpt_tagger import TaskConfig
 from nxontology_ml.gpt_tagger._chat_completion_middleware import (
     _ChatCompletionMiddleware,
 )
@@ -19,7 +20,6 @@ from nxontology_ml.gpt_tagger._openai_models import (
 from nxontology_ml.gpt_tagger._utils import node_to_str_fn
 from nxontology_ml.gpt_tagger.tests._utils import (
     mk_stub_ccm,
-    precision_config,
     sanitize_json_format,
 )
 from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
@@ -67,7 +67,7 @@ def test_ctor_verify() -> None:
         _mk_test_ccm(prompt_template="foo")
 
 
-def test_create(tmpdir: LocalPath) -> None:
+def test_create(tmpdir: LocalPath, precision_config: TaskConfig) -> None:
     logdir = Path(tmpdir) / "logs"
     config = copy(precision_config)
     config.model_temperature = 1
@@ -103,7 +103,7 @@ def test_create(tmpdir: LocalPath) -> None:
     assert sanitize_json_format(resp_file.read_text()) == json_resp
 
 
-def test_from_config() -> None:
+def test_from_config(precision_config: TaskConfig) -> None:
     ccm = _ChatCompletionMiddleware.from_config(precision_config)
     assert ccm._partial_payload["model"] == "gpt-3.5-turbo"
     assert ccm._partial_payload["messages"][0]["content"] == "__PLACEHOLDER__"

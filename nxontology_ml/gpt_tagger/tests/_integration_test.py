@@ -12,13 +12,12 @@ from nxontology_ml.gpt_tagger._gpt_tagger import GptTagger
 from nxontology_ml.gpt_tagger._models import TaskConfig
 from nxontology_ml.gpt_tagger._openai_models import Response
 from nxontology_ml.gpt_tagger._utils import node_to_str_fn
-from nxontology_ml.gpt_tagger.tests._utils import precision_config
 from nxontology_ml.tests.utils import get_test_nodes, read_test_resource
 from nxontology_ml.utils import ROOT_DIR
 
 
 @pytest.mark.skip(reason="IT: Makes a real openai api call")
-def test_chat_completion_precision_it() -> None:
+def test_chat_completion_precision_it(precision_config: TaskConfig) -> None:
     # NOTE: Flaky API response, even with temp=0 :(
     # NOTE: Needs an OPENAI_API_KEY setup, see main README.md
     ccm = _ChatCompletionMiddleware.from_config(precision_config)

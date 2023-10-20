@@ -5,6 +5,9 @@ from nxontology.node import NodeT
 
 ROOT_DIR: Path = Path(__file__).parent.parent
 
+# Will require override on Windows
+CACHE_DIR = Path("/tmp/nxontology-ml/cache")
+
 
 def get_output_directory(nxo: NXOntology[NodeT], parent_dir: Path = ROOT_DIR) -> Path:
     """Get output directory for an nxontology, using the ontology name for the directory."""

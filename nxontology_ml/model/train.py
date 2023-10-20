@@ -31,7 +31,8 @@ def train_model(
     (X, y) = training_set or read_training_data(
         filter_out_non_disease=True, nxo=nxo, take=take
     )
-
+    if conf.gpt_tagger_config:
+        assert conf.gpt_tagger_config.cache_dir == conf.cache_dir
     feature_pipeline: Pipeline = make_pipeline(
         PrepareNodeFeatures(nxo=nxo),
         NodeInfoFeatures(),
@@ -39,11 +40,7 @@ def train_model(
         SubsetsFeatures(enabled=conf.subsets_enabled),
         TherapeuticAreaFeatures(enabled=conf.ta_enabled),
         GptTagFeatures.from_config(conf.gpt_tagger_config),
-        TextEmbeddingsTransformer.from_config(
-            enabled=conf.embedding_enabled,
-            pca_components=conf.pca_components,
-            use_lda=conf.use_lda,
-        ),
+        TextEmbeddingsTransformer.from_config(conf=conf),
         CatBoostDataFormatter(),
     )
     X_transform = feature_pipeline.fit_transform(X, y)

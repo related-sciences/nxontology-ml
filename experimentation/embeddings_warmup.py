@@ -5,6 +5,7 @@ from nxontology_ml.text_embeddings.embeddings_model import (
     DEFAULT_EMBEDDING_MODEL,
     AutoModelEmbeddings,
 )
+from nxontology_ml.utils import CACHE_DIR
 
 
 def warmup_cache(
@@ -14,6 +15,7 @@ def warmup_cache(
     # Warm up the embedding cache
     ame = ame or AutoModelEmbeddings.from_pretrained(
         DEFAULT_EMBEDDING_MODEL,
+        cache_dir=CACHE_DIR,
     )
     nxo = get_efo_otar_slim()
     X, _ = read_training_data(take=take)

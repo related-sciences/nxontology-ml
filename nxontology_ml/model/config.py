@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from nxontology_ml.gpt_tagger import TaskConfig
 from nxontology_ml.model.utils import BiasedMaeMetric
-from nxontology_ml.utils import ROOT_DIR
+from nxontology_ml.utils import CACHE_DIR, ROOT_DIR
 
 EXPERIMENT_MODEL_DIR = ROOT_DIR / "data/experiments"
 
@@ -33,6 +33,7 @@ class ModelConfig(BaseModel):  # type: ignore[misc]
     iterations: int = 5000
     eval_metric: str = "MultiClass"
     base_dir: Path = EXPERIMENT_MODEL_DIR
+    cache_dir: Path = CACHE_DIR
 
     @property
     def name(self) -> str:  # noqa: C901

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from nxontology_ml.utils import ROOT_DIR
+from nxontology_ml.utils import CACHE_DIR, ROOT_DIR
 
 LOG_DIR = ROOT_DIR / "logs/openai-api"
 
@@ -69,6 +69,8 @@ class TaskConfig:
 
     # Optionally persist logs to disk
     logs_path: Path | None = LOG_DIR
+
+    cache_dir: Path = CACHE_DIR
 
 
 @dataclass

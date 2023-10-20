@@ -139,12 +139,7 @@ def run_experiments(
                 SubsetsFeatures(enabled=exp.subsets_enabled),
                 TherapeuticAreaFeatures(enabled=exp.ta_enabled),
                 GptTagFeatures.from_config(exp.gpt_tagger_config),
-                TextEmbeddingsTransformer.from_config(
-                    enabled=exp.embedding_enabled,
-                    pca_components=exp.pca_components,
-                    use_lda=exp.use_lda,
-                    embedding_model=ame,
-                ),
+                TextEmbeddingsTransformer.from_config(conf=exp, embedding_model=ame),
                 CatBoostDataFormatter(),
             )
             mmb.steps_from_pipeline(feature_pipeline)

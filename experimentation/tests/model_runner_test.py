@@ -9,7 +9,9 @@ from nxontology_ml.text_embeddings.embeddings_model import (
 
 
 def test_run_experiments(tmp_path: Path) -> None:
-    ame = AutoModelEmbeddings.from_pretrained(DEFAULT_EMBEDDING_MODEL)
+    ame = AutoModelEmbeddings.from_pretrained(
+        DEFAULT_EMBEDDING_MODEL, cache_dir=tmp_path
+    )
     experiments = [
         ModelConfig(
             eval_metric="BiasedMaeMetric",

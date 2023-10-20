@@ -6,9 +6,9 @@ import pytest
 import tiktoken
 from tiktoken import Encoding
 
+from nxontology_ml.gpt_tagger import TaskConfig
 from nxontology_ml.gpt_tagger._openai_models import _4K
 from nxontology_ml.gpt_tagger._tiktoken_batcher import _TiktokenBatcher
-from nxontology_ml.gpt_tagger.tests._utils import precision_config
 from nxontology_ml.tests.utils import get_test_resource_path
 
 
@@ -54,7 +54,9 @@ def test_add_tokens(tiktoken_cl100k_encoding: Encoding) -> None:
         batcher._do_add_record_to_buffer(record)
 
 
-def test_from_config(tiktoken_cl100k_encoding: Encoding) -> None:
+def test_from_config(
+    tiktoken_cl100k_encoding: Encoding, precision_config: TaskConfig
+) -> None:
     # Valid config
     batcher = _TiktokenBatcher.from_config(precision_config)
     assert batcher._tiktoken_encoding == tiktoken_cl100k_encoding

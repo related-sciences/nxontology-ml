@@ -6,6 +6,7 @@ from sklearn.pipeline import make_pipeline
 
 from nxontology_ml.data import read_training_data
 from nxontology_ml.features import PrepareNodeFeatures
+from nxontology_ml.model.config import ModelConfig
 from nxontology_ml.sklearn_transformer import (
     NodeFeatures,
 )
@@ -19,19 +20,21 @@ from nxontology_ml.text_embeddings.text_embeddings_transformer import (
 )
 
 
-def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
+def test_end_to_end(
+    nxo: NXOntology[str],
+    embeddings_cache_dir: Path,
+) -> None:
     cached_ame = AutoModelEmbeddings.from_pretrained(
         pretrained_model_name=DEFAULT_EMBEDDING_MODEL,
-        cache_path=embeddings_test_cache,
+        cache_dir=embeddings_cache_dir,
     )
     pnf = PrepareNodeFeatures(nxo)
     X, y = read_training_data(nxo=nxo, take=10)
+    conf = ModelConfig(cache_dir=embeddings_cache_dir)
 
     ##
     # Disabled testing
-    tet = TextEmbeddingsTransformer.from_config(
-        enabled=False, embedding_model=cached_ame
-    )
+    tet = TextEmbeddingsTransformer.from_config(conf=conf, embedding_model=cached_ame)
     nf = make_pipeline(pnf, tet).fit_transform(X, y)
     assert isinstance(nf, NodeFeatures)
     assert len(nf.cat_features) == 0
@@ -39,9 +42,8 @@ def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
 
     ##
     # Full embedding Testing
-    tet = TextEmbeddingsTransformer.from_config(
-        use_lda=False, embedding_model=cached_ame
-    )
+    conf.embedding_enabled = True
+    tet = TextEmbeddingsTransformer.from_config(conf, embedding_model=cached_ame)
     nf = make_pipeline(pnf, tet).fit_transform(X, y)
     assert isinstance(nf, NodeFeatures)
     assert len(nf.cat_features) == 0
@@ -53,9 +55,8 @@ def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
 
     ##
     # LDA Testing
-    tet = TextEmbeddingsTransformer.from_config(
-        use_lda=True, embedding_model=cached_ame
-    )
+    conf.use_lda = True
+    tet = TextEmbeddingsTransformer.from_config(conf=conf, embedding_model=cached_ame)
     nf = make_pipeline(pnf, tet).fit_transform(X, y)
     assert isinstance(nf, NodeFeatures)
     assert len(nf.cat_features) == 0
@@ -67,9 +68,9 @@ def test_end_to_end(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
 
     ##
     # PCA Testing
-    tet = TextEmbeddingsTransformer.from_config(
-        use_lda=False, pca_components=8, embedding_model=cached_ame
-    )
+    conf.use_lda = False
+    conf.pca_components = 8
+    tet = TextEmbeddingsTransformer.from_config(conf, embedding_model=cached_ame)
     nf = make_pipeline(pnf, tet).fit_transform(X, y)
     assert isinstance(nf, NodeFeatures)
     assert len(nf.cat_features) == 0

@@ -13,16 +13,15 @@ from nxontology_ml.text_embeddings.embeddings_model import (
     DEFAULT_EMBEDDING_MODEL,
     EMBEDDING_SIZES,
     AutoModelEmbeddings,
-    _cache_path,
+    _cache_filename,
     _LazyAutoModel,
 )
-from nxontology_ml.utils import ROOT_DIR
 
 
-def test_embed_node(nxo: NXOntology[str], embeddings_test_cache: Path) -> None:
+def test_embed_node(nxo: NXOntology[str], embeddings_cache_dir: Path) -> None:
     ame = AutoModelEmbeddings.from_pretrained(
         pretrained_model_name=DEFAULT_EMBEDDING_MODEL,
-        cache_path=embeddings_test_cache,
+        cache_dir=embeddings_cache_dir,
     )
     X, _ = read_training_data(nxo=nxo, take=10)
     vecs = np.array([ame.embed_node(nxo.node_info(node_id)) for node_id in X])
@@ -57,7 +56,7 @@ def test_caching(nxo: NXOntology[str], tmp_path: Path) -> None:
     ame = AutoModelEmbeddings.from_pretrained(
         pretrained_model_name=DEFAULT_EMBEDDING_MODEL,
         lazy_model=model_mock,
-        cache_path=Path(tmp_path / "cache.ldb"),
+        cache_dir=tmp_path,
     )
     test_node = "DOID:0050890"
     vec = ame.embed_node(nxo.node_info(test_node))
@@ -95,9 +94,9 @@ def test_lazy_automodel() -> None:
     tokenizer_cls_mock.from_pretrained.assert_called_once_with(model_name)
 
 
-def test_cache_path() -> None:
-    p = _cache_path(pretrained_model_name=DEFAULT_EMBEDDING_MODEL)
-    assert p == ROOT_DIR / ".cache/michiyasunaga_BioLinkBERT_base.ldb"
+def test_cache_filename() -> None:
+    fn = _cache_filename(pretrained_model_name=DEFAULT_EMBEDDING_MODEL)
+    assert fn == "michiyasunaga_BioLinkBERT_base.ldb"
 
 
 @pytest.mark.skip(reason="Pulls resources off the internet")
@@ -105,7 +104,7 @@ def test_builder(tmp_path: Path) -> None:
     ame = AutoModelEmbeddings.from_pretrained(
         pretrained_model_name=DEFAULT_EMBEDDING_MODEL,
         # Ensure that cache doesn't exit
-        cache_path=Path(tmp_path / "cache.ldb"),
+        cache_dir=tmp_path,
     )
     vec = ame.embed_text("Sunitinib is a tyrosine kinase inhibitor")
     assert vec.shape == (EMBEDDING_SIZES[DEFAULT_EMBEDDING_MODEL],)

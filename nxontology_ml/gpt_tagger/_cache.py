@@ -10,7 +10,6 @@ from lsm import LSM
 
 from nxontology_ml.gpt_tagger._models import TaskConfig
 from nxontology_ml.gpt_tagger._utils import config_to_cache_namespace, counter_or_empty
-from nxontology_ml.utils import ROOT_DIR
 
 
 class _Cache:
@@ -70,12 +69,10 @@ class _Cache:
         cls,
         config: TaskConfig,
         counter: Counter[str] | None = None,
-        cache_path: Path | None = None,
     ) -> "_Cache":
         cache_namespace = config_to_cache_namespace(config)
-        if not cache_path:
-            cache_path = ROOT_DIR / f".cache/{cache_namespace}.ldb"
-            cache_path.parent.mkdir(parents=True, exist_ok=True)
+        config.cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_path = config.cache_dir / f"{cache_namespace}.ldb"
         return cls(
             storage=LazyLSM(cache_path.as_posix()),
             namespace="",  # Namespace is already part of the storage path
